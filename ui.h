@@ -795,6 +795,23 @@ _UI_EXTERN void uiEntryOnChanged(uiEntry *e,
 	void (*f)(uiEntry *sender, void *senderData), void *data);
 
 /**
+ * Registers a callback for when the user drops files on the entry.
+ *
+ * @param e uiEntry instance.
+ * @param f Callback function.\n
+ *          @p sender Back reference to the instance that initiated the callback.\n
+ *          @p filenCount Number of the dropped files.\n
+ *          @p fileNames Paths to the dropped files.\n
+ *          @p senderData User data registered with the sender instance.\n
+ * @param data User data to be passed to the callback.
+ *
+ * @note The callback is not triggered when not calling uiEntryDragAcceptFiles().
+ * @memberof uiEntry
+ */
+_UI_EXTERN void uiEntryOnFilesDropped(uiEntry *e,
+	void (*f)(uiEntry *sender, int fileCount, char** fileNames, void *senderData), void *data);
+
+/**
  * Returns whether or not the entry's text can be changed.
  *
  * @param e uiEntry instance.
@@ -811,6 +828,24 @@ _UI_EXTERN int uiEntryReadOnly(uiEntry *e);
  * @memberof uiEntry
  */
 _UI_EXTERN void uiEntrySetReadOnly(uiEntry *e, int readonly);
+
+/**
+ * Returns whether or not the entry will accept dropped files.
+ *
+ * @param e uiEntry instance.
+ * @returns `TRUE` if accept dropped files, `FALSE` otherwise. [Default: `FALSE`]
+ * @memberof uiEntry
+ */
+_UI_EXTERN int uiEntryAcceptDrops(uiEntry *e);
+
+/**
+ * Sets whether or not the entry will accept dropped files.
+ *
+ * @param e uiEntry instance.
+ * @param accept `TRUE` to accept dropped files, `FALSE` otherwise.
+ * @memberof uiEntry
+ */
+_UI_EXTERN void uiEntrySetAcceptDrops(uiEntry *e, int accept);
 
 /**
  * Creates a new entry.

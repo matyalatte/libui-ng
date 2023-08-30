@@ -18,6 +18,37 @@
 	return s;
 }
 
+- (NSDragOperation)draggingEntered:(id)sender
+{
+	if ( [[[sender draggingPasteboard] types] containsObject:NSFilenamesPboardType] ) {
+		return NSDragOperationCopy;
+	}
+	return NSDragOperationNone;
+}
+
+- (NSDragOperation)draggingUpdated:(id)sender
+{
+	if ( [[[sender draggingPasteboard] types] containsObject:NSFilenamesPboardType] ) {
+		return NSDragOperationCopy;
+	}
+	return NSDragOperationNone;
+}
+
+- (BOOL)prepareForDragOperation:(id)sender
+{
+	return YES;
+}
+
+-(BOOL)performDragOperation:(id<NSDraggingInfo>)sender
+{
+	return YES;
+}
+
+-(void)concludeDragOperation:(id<NSDraggingInfo>)sender
+{
+	[self.delegate onFilesDropped:sender];
+}
+
 @end
 
 // TODO does this have one on its own?
@@ -33,6 +64,37 @@
 	s = [super intrinsicContentSize];
 	s.width = textfieldWidth;
 	return s;
+}
+
+- (NSDragOperation)draggingEntered:(id)sender
+{
+	if ( [[[sender draggingPasteboard] types] containsObject:NSFilenamesPboardType] ) {
+		return NSDragOperationCopy;
+	}
+	return NSDragOperationNone;
+}
+
+- (NSDragOperation)draggingUpdated:(id)sender
+{
+	if ( [[[sender draggingPasteboard] types] containsObject:NSFilenamesPboardType] ) {
+		return NSDragOperationCopy;
+	}
+	return NSDragOperationNone;
+}
+
+- (BOOL)prepareForDragOperation:(id)sender
+{
+	return YES;
+}
+
+-(BOOL)performDragOperation:(id<NSDraggingInfo>)sender
+{
+	return YES;
+}
+
+-(void)concludeDragOperation:(id<NSDraggingInfo>)sender
+{
+	[self.delegate onFilesDropped:sender];
 }
 
 @end
@@ -52,6 +114,37 @@
 	return s;
 }
 
+- (NSDragOperation)draggingEntered:(id)sender
+{
+	if ( [[[sender draggingPasteboard] types] containsObject:NSFilenamesPboardType] ) {
+		return NSDragOperationCopy;
+	}
+	return NSDragOperationNone;
+}
+
+- (NSDragOperation)draggingUpdated:(id)sender
+{
+	if ( [[[sender draggingPasteboard] types] containsObject:NSFilenamesPboardType] ) {
+		return NSDragOperationCopy;
+	}
+	return NSDragOperationNone;
+}
+
+- (BOOL)prepareForDragOperation:(id)sender
+{
+	return YES;
+}
+
+-(BOOL)performDragOperation:(id<NSDraggingInfo>)sender
+{
+	return YES;
+}
+
+-(void)concludeDragOperation:(id<NSDraggingInfo>)sender
+{
+	[self.delegate onFilesDropped:sender];
+}
+
 @end
 
 struct uiEntry {
@@ -59,6 +152,9 @@ struct uiEntry {
 	NSTextField *textfield;
 	void (*onChanged)(uiEntry *, void *);
 	void *onChangedData;
+	void (*onFilesDropped)(uiEntry *, int, char**, void *);
+	void *onFilesDroppedData;
+	int acceptDrops;
 };
 
 static BOOL isSearchField(NSTextField *tf)
@@ -72,6 +168,7 @@ static BOOL isSearchField(NSTextField *tf)
 - (id)initWithEntry:(uiEntry *)e;
 - (void)controlTextDidChange:(NSNotification *)notification;
 - (IBAction)onChanged:(id)sender;
+- (void)onFilesDropped:(id <NSDraggingInfo>)sender;
 @end
 
 @implementation uiprivEntryDelegate
@@ -94,6 +191,38 @@ static BOOL isSearchField(NSTextField *tf)
 	uiEntry *e = self->entry;;
 
 	(*(e->onChanged))(e, e->onChangedData);
+}
+
+- (void)onFilesDropped:(id <NSDraggingInfo>)sender
+{
+	NSPasteboard *pboard = [sender draggingPasteboard];
+	if ( ![[pboard types] containsObject:NSFilenamesPboardType] )
+		return;
+	NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
+	int count = [files count];
+	if (count == 0)
+		return;
+
+	char** names = (char**)uiprivAlloc((count + 1) * sizeof(char*), "char*[] names");
+	char** start = names;
+	for (int i = 0; i < count; i++) {
+		NSString *nsfile = [files objectAtIndex:i];
+		int size = [nsfile lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+		*names = (char*)uiprivAlloc((size + 1) * sizeof(char), "char[] name");
+		strcpy(*names, [nsfile UTF8String]);
+		names++;
+	}
+
+	uiEntry *e = self->entry;
+	(*(e->onFilesDropped))(e, count, start, e->onFilesDroppedData);
+
+	names = start;
+	for (int i = 0; i < count; i++) {
+		uiprivFree(*names);
+		names++;
+	}
+
+	uiprivFree(start);
 }
 
 @end
@@ -135,6 +264,12 @@ void uiEntryOnChanged(uiEntry *e, void (*f)(uiEntry *, void *), void *data)
 	e->onChangedData = data;
 }
 
+void uiEntryOnFilesDropped(uiEntry *e, void (*f)(uiEntry *, int, char**, void *), void *data)
+{
+	e->onFilesDropped = f;
+	e->onFilesDroppedData = data;
+}
+
 int uiEntryReadOnly(uiEntry *e)
 {
 	return [e->textfield isEditable] == NO;
@@ -150,7 +285,26 @@ void uiEntrySetReadOnly(uiEntry *e, int readonly)
 	[e->textfield setEditable:editable];
 }
 
+int uiEntryAcceptDrops(uiEntry *e)
+{
+	return e->acceptDrops;
+}
+
+void uiEntrySetAcceptDrops(uiEntry *e, int accept)
+{
+	e->acceptDrops = accept != 0;
+	if (accept)
+		[e->textfield registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+	else
+		[e->textfield registerForDraggedTypes:nil];
+}
+
 static void defaultOnChanged(uiEntry *e, void *data)
+{
+	// do nothing
+}
+
+static void defaultOnFilesDropped(uiEntry *e, int count, char** files, void *data)
 {
 	// do nothing
 }
@@ -187,6 +341,7 @@ static uiEntry *finishNewEntry(Class class)
 	}
 
 	uiEntryOnChanged(e, defaultOnChanged, NULL);
+	uiEntryOnFilesDropped(e, defaultOnFilesDropped, NULL);
 
 	return e;
 }

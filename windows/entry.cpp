@@ -7,6 +7,9 @@ struct uiEntry {
 	void (*onChanged)(uiEntry *, void *);
 	void *onChangedData;
 	BOOL inhibitChanged;
+	void (*onFilesDropped)(uiEntry *, int, char**, void *);
+	void *onFilesDroppedData;
+	int acceptDrops;
 };
 
 static BOOL onWM_COMMAND(uiControl *c, HWND hwnd, WORD code, LRESULT *lResult)
@@ -22,11 +25,43 @@ static BOOL onWM_COMMAND(uiControl *c, HWND hwnd, WORD code, LRESULT *lResult)
 	return TRUE;
 }
 
+static BOOL onWM_DROPFILES(uiControl *c, HWND hwnd, HDROP hdrop, LRESULT *lResult)
+{
+	uiEntry *e = uiEntry(c);
+
+	int count = DragQueryFile(hdrop, -1, NULL, 0);
+
+	char** names = (char**)uiprivAlloc((count + 1) * sizeof(char*), "char*[] names");
+	char** start = names;
+	wchar_t* file;
+	for (int i = 0; i < count; i++) {
+		size_t size = DragQueryFile(hdrop, i, NULL, 0);
+		file = (wchar_t*)uiprivAlloc((size + 1) * sizeof(wchar_t), "wchar_t[] file");
+		DragQueryFile(hdrop, i, file, size + 1);
+		*names = toUTF8(file);
+		uiprivFree(file);
+		names++;
+	}
+	DragFinish(hdrop);
+
+	(*(e->onFilesDropped))(e, count, start, e->onFilesDroppedData);
+
+	names = start;
+	for (int i = 0; i < count; i++) {
+		uiprivFree(*names);
+		names++;
+	}
+	uiprivFree(start);
+	*lResult = 0;
+	return TRUE;
+}
+
 static void uiEntryDestroy(uiControl *c)
 {
 	uiEntry *e = uiEntry(c);
 
 	uiWindowsUnregisterWM_COMMANDHandler(e->hwnd);
+	uiWindowsUnregisterWM_DROPFILESHandler(e->hwnd);
 	uiWindowsEnsureDestroyWindow(e->hwnd);
 	uiFreeControl(uiControl(e));
 }
@@ -56,6 +91,11 @@ static void defaultOnChanged(uiEntry *e, void *data)
 	// do nothing
 }
 
+static void defaultOnFilesDropped(uiEntry *e, int count, char** names, void *data)
+{
+	// do nothing
+}
+
 char *uiEntryText(uiEntry *e)
 {
 	return uiWindowsWindowText(e->hwnd);
@@ -79,6 +119,12 @@ void uiEntryOnChanged(uiEntry *e, void (*f)(uiEntry *, void *), void *data)
 	e->onChangedData = data;
 }
 
+void uiEntryOnFilesDropped(uiEntry *e, void (*f)(uiEntry *, int, char**, void *), void *data)
+{
+	e->onFilesDropped = f;
+	e->onFilesDroppedData = data;
+}
+
 int uiEntryReadOnly(uiEntry *e)
 {
 	return (getStyle(e->hwnd) & ES_READONLY) != 0;
@@ -88,6 +134,34 @@ void uiEntrySetReadOnly(uiEntry *e, int readonly)
 {
 	if (Edit_SetReadOnly(e->hwnd, readonly) == 0)
 		logLastError(L"error setting uiEntry read-only state");
+}
+
+int uiEntryAcceptDrops(uiEntry *e)
+{
+	return e->acceptDrops;
+}
+
+void uiEntrySetAcceptDrops(uiEntry * e, int accept)
+{
+	e->acceptDrops = accept != 0;
+	DragAcceptFiles(e->hwnd, accept);
+}
+
+WNDPROC entryProcDefault = 0;
+
+static LRESULT CALLBACK entryWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT lResult;
+
+	switch (uMsg) {
+	case WM_DROPFILES:
+		return runWM_DROPFILES(wParam, (LPARAM)hwnd, &lResult);
+		break;
+	default:
+		return CallWindowProcW(entryProcDefault, hwnd, uMsg, wParam, lParam);
+		break;
+	}
+	return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
 
 static uiEntry *finishNewEntry(DWORD style)
@@ -102,8 +176,13 @@ static uiEntry *finishNewEntry(DWORD style)
 		hInstance, NULL,
 		TRUE);
 
+	entryProcDefault = (WNDPROC)GetWindowLongPtr(e->hwnd, GWLP_WNDPROC);
+	SetWindowLongPtr(e->hwnd, GWLP_WNDPROC, (LONG_PTR)entryWndProc);
+
 	uiWindowsRegisterWM_COMMANDHandler(e->hwnd, onWM_COMMAND, uiControl(e));
+	uiWindowsRegisterWM_DROPFILESHandler(e->hwnd, onWM_DROPFILES, uiControl(e));
 	uiEntryOnChanged(e, defaultOnChanged, NULL);
+	uiEntryOnFilesDropped(e, defaultOnFilesDropped, NULL);
 
 	return e;
 }

@@ -5,6 +5,7 @@ struct handler {
 	BOOL (*commandHandler)(uiControl *, HWND, WORD, LRESULT *);
 	BOOL (*notifyHandler)(uiControl *, HWND, NMHDR *, LRESULT *);
 	BOOL (*hscrollHandler)(uiControl *, HWND, WORD, LRESULT *);
+	BOOL (*dropHandler)(uiControl *, HWND, HDROP, LRESULT *);
 	uiControl *c;
 
 	// just to ensure handlers[new HWND] initializes properly
@@ -14,6 +15,7 @@ struct handler {
 		this->commandHandler = NULL;
 		this->notifyHandler = NULL;
 		this->hscrollHandler = NULL;
+		this->dropHandler = NULL;
 		this->c = NULL;
 	}
 };
@@ -44,6 +46,14 @@ void uiWindowsRegisterWM_HSCROLLHandler(HWND hwnd, BOOL (*handler)(uiControl *, 
 	handlers[hwnd].c = c;
 }
 
+void uiWindowsRegisterWM_DROPFILESHandler(HWND hwnd, BOOL (*handler)(uiControl *, HWND, HDROP, LRESULT *), uiControl *c)
+{
+	if (handlers[hwnd].dropHandler != NULL)
+		uiprivImplBug("already registered a WM_DROPFILES handler to window handle %p", hwnd);
+	handlers[hwnd].dropHandler = handler;
+	handlers[hwnd].c = c;
+}
+
 void uiWindowsUnregisterWM_COMMANDHandler(HWND hwnd)
 {
 	if (handlers[hwnd].commandHandler == NULL)
@@ -63,6 +73,13 @@ void uiWindowsUnregisterWM_HSCROLLHandler(HWND hwnd)
 	if (handlers[hwnd].hscrollHandler == NULL)
 		uiprivImplBug("window handle %p not registered to receive WM_HSCROLL events", hwnd);
 	handlers[hwnd].hscrollHandler = NULL;
+}
+
+void uiWindowsUnregisterWM_DROPFILESHandler(HWND hwnd)
+{
+	if (handlers[hwnd].dropHandler == NULL)
+		uiprivImplBug("window handle %p not registered to receive WM_DROPFILES events", hwnd);
+	handlers[hwnd].dropHandler = NULL;
 }
 
 template<typename T>
@@ -123,6 +140,22 @@ BOOL runWM_HSCROLL(WPARAM wParam, LPARAM lParam, LRESULT *lResult)
 	c = handlers[hwnd].c;
 	if (shouldRun(hwnd, handler))
 		return (*handler)(c, hwnd, arg3, lResult);
+	return FALSE;
+}
+
+BOOL runWM_DROPFILES(WPARAM wParam, LPARAM lParam, LRESULT *lResult)
+{
+	HWND hwnd;
+	HDROP hdrop;
+	BOOL (*handler)(uiControl *, HWND, HDROP, LRESULT *);
+	uiControl *c;
+
+	hwnd = (HWND) lParam;
+	hdrop = (HDROP) wParam;
+	handler = handlers[hwnd].dropHandler;
+	c = handlers[hwnd].c;
+	if (shouldRun(hwnd, handler))
+		return (*handler)(c, hwnd, hdrop, lResult);
 	return FALSE;
 }
 
