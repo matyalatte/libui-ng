@@ -10,6 +10,7 @@ struct uiEntry {
 	void (*onFilesDropped)(uiEntry *, int, char**, void *);
 	void *onFilesDroppedData;
 	int acceptDrops;
+	int placeholderLen;
 };
 
 static BOOL onWM_COMMAND(uiControl *c, HWND hwnd, WORD code, LRESULT *lResult)
@@ -145,6 +146,30 @@ void uiEntrySetAcceptDrops(uiEntry * e, int accept)
 {
 	e->acceptDrops = accept != 0;
 	DragAcceptFiles(e->hwnd, accept);
+}
+
+char *uiEntryPlaceholder(uiEntry *e)
+{
+	int size = e->placeholderLen + 1;
+	WCHAR *wtext = (wchar_t*)uiprivAlloc(size * sizeof(wchar_t), "wchar_t[] wtext");
+
+	if (!SendMessageW(e->hwnd, EM_GETCUEBANNER, (WPARAM)wtext, size)) {
+		logLastError(L"error getting placeholder text");
+	}
+	char *text;
+	text = toUTF8(wtext);
+	uiprivFree(wtext);
+	return text;
+}
+
+void uiEntrySetPlaceholder(uiEntry *e, const char *text)
+{
+	e->placeholderLen = strlen(text);
+	WCHAR *wtext;
+	wtext = toUTF16(text);
+	if (!SendMessageW(e->hwnd, EM_SETCUEBANNER, FALSE, (LPARAM)wtext))
+		logLastError(L"error setting placeholder text");
+	uiprivFree(wtext);
 }
 
 WNDPROC entryProcDefault = 0;

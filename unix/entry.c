@@ -151,6 +151,15 @@ void uiEntrySetAcceptDrops(uiEntry *e, int accept)
 	}
 }
 
+char *uiEntryPlaceholder(uiEntry *e)
+{
+	return uiUnixStrdupText(gtk_entry_get_placeholder_text(e->entry));
+}
+
+void uiEntrySetPlaceholder(uiEntry *e, const char *text)
+{
+	gtk_entry_set_placeholder_text(e->entry, text);
+}
 
 static uiEntry *finishNewEntry(GtkWidget *w, const gchar *signal)
 {

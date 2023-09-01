@@ -848,6 +848,28 @@ _UI_EXTERN int uiEntryAcceptDrops(uiEntry *e);
 _UI_EXTERN void uiEntrySetAcceptDrops(uiEntry *e, int accept);
 
 /**
+ * Returns the entry's placeholder text.
+ *
+ * @param e uiEntry instance.
+ * @returns The placeholder text of the entry.\n
+ *          A `NUL` terminated UTF-8 string.\n
+ *          Caller is responsible for freeing the data with `uiFreeText()`.
+ * @memberof uiEntry
+ */
+_UI_EXTERN char *uiEntryPlaceholder(uiEntry *e);
+
+/**
+ * Sets text to be displayed in the entry when it is empty.
+ *
+ * @param e uiEntry instance.
+ * @param text Placeholder text.\n
+ *             A valid, `NUL` terminated UTF-8 string.\n
+ *             Data is copied internally. Ownership is not transferred.
+ * @memberof uiEntry
+ */
+_UI_EXTERN void uiEntrySetPlaceholder(uiEntry *e, const char *text);
+
+/**
  * Creates a new entry.
  *
  * @returns A new uiEntry instance.
