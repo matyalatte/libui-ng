@@ -164,9 +164,9 @@ char *uiEntryPlaceholder(uiEntry *e)
 
 void uiEntrySetPlaceholder(uiEntry *e, const char *text)
 {
-	e->placeholderLen = strlen(text);
 	WCHAR *wtext;
 	wtext = toUTF16(text);
+	e->placeholderLen = wcslen(wtext);
 	if (!SendMessageW(e->hwnd, EM_SETCUEBANNER, FALSE, (LPARAM)wtext))
 		logLastError(L"error setting placeholder text");
 	uiprivFree(wtext);
