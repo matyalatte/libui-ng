@@ -59,6 +59,7 @@ libui_sources += [
 	'windows/tablemetrics.cpp',
 	'windows/tabpage.cpp',
 	'windows/text.cpp',
+	'windows/tooltip.cpp',
 	'windows/utf16.cpp',
 	'windows/utilwin.cpp',
 	'windows/window.cpp',
@@ -79,7 +80,7 @@ if libui_mode == 'shared'
 endif
 
 # TODO prune this list
-foreach lib : ['user32', 'kernel32', 'gdi32', 'comctl32', 'uxtheme', 'msimg32', 'comdlg32', 'd2d1', 'dwrite', 'ole32', 'oleaut32', 'oleacc', 'uuid', 'windowscodecs']
+foreach lib : ['user32', 'kernel32', 'gdi32', 'comctl32', 'uxtheme', 'msimg32', 'comdlg32', 'd2d1', 'dwrite', 'ole32', 'oleaut32', 'oleacc', 'shell32', 'uuid', 'windowscodecs']
 	libui_deps += [
 		meson.get_compiler('cpp').find_library(lib,
 			required: true),

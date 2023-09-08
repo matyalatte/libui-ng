@@ -4096,6 +4096,16 @@ _UI_EXTERN void uiTableSetSelection(uiTable *t, uiTableSelection *sel);
  */
 _UI_EXTERN void uiFreeTableSelection(uiTableSelection* s);
 
+// Don't use them for your projects.
+// The return values are NULL on Unix and Darwin.
+// Windows build will return hwnd for the tooltip window.
+_UI_EXTERN uintptr_t uiTooltipSetSpinbox(uiSpinbox* s, const char* text);
+_UI_EXTERN uintptr_t uiTooltipSetControl(uiControl* c, const char* text);
+
+// This will do nothing on Unix and Darwin
+// You should use this to free the tooltip window on Windows.
+_UI_EXTERN void uiTooltipDestroy(uintptr_t tooltip);
+
 #ifdef __cplusplus
 }
 #endif
