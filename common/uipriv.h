@@ -26,13 +26,22 @@ extern void uiprivFree(void *);
 #else
 #define uiprivMacro__func__ __func__
 #endif
-extern void uiprivRealBug(const char *file, const char *line, const char *func, const char *prefix, const char *format, va_list ap);
 #define uiprivMacro_ns2(s) #s
 #define uiprivMacro_ns(s) uiprivMacro_ns2(s)
+
+#ifdef LIBUI_NO_DEBUG
+#define uiprivRealBug(...)
+#define uiprivDoImplBug(...)
+#define uiprivImplBug(...)
+#define uiprivDoUserBug(...)
+#define uiprivUserBug(...)
+#else  // LIBUI_NO_DEBUG
+extern void uiprivRealBug(const char *file, const char *line, const char *func, const char *prefix, const char *format, va_list ap);
 extern void uiprivDoImplBug(const char *file, const char *line, const char *func, const char *format, ...);
 #define uiprivImplBug(...) uiprivDoImplBug(__FILE__, uiprivMacro_ns(__LINE__), uiprivMacro__func__, __VA_ARGS__)
 extern void uiprivDoUserBug(const char *file, const char *line, const char *func, const char *format, ...);
 #define uiprivUserBug(...) uiprivDoUserBug(__FILE__, uiprivMacro_ns(__LINE__), uiprivMacro__func__, __VA_ARGS__)
+#endif  // LIBUI_NO_DEBUG
 
 // shouldquit.c
 extern int uiprivShouldQuit(void);

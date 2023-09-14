@@ -1,4 +1,5 @@
 // 25 february 2015
+#ifndef LIBUI_NO_DEBUG
 #include "uipriv_windows.hpp"
 
 // LONGTERM disable logging and stopping on no-debug builds
@@ -27,7 +28,9 @@ HRESULT _logLastError(debugargs, const WCHAR *s)
 		LocalFree(formatted);		// ignore error
 	printDebug(msg);
 	uiprivFree(msg);
+#ifndef LIBUI_NO_BREAK
 	DebugBreak();
+#endif
 
 	SetLastError(le);
 	// a function does not have to set a last error
@@ -54,7 +57,9 @@ HRESULT _logHRESULT(debugargs, const WCHAR *s, HRESULT hr)
 		LocalFree(formatted);		// ignore error
 	printDebug(msg);
 	uiprivFree(msg);
+#ifndef LIBUI_NO_BREAK
 	DebugBreak();
+#endif
 
 	return hr;
 }
@@ -80,5 +85,9 @@ void uiprivRealBug(const char *file, const char *line, const char *func, const c
 	printDebug(final);
 	uiprivFree(final);
 
+#ifndef LIBUI_NO_BREAK
 	DebugBreak();
+#endif
 }
+
+#endif  // LIBUI_NO_DEBUG

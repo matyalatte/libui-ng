@@ -35,7 +35,6 @@ libui_forced_options = {
 	'c_std':         'c99',   # strict C99
 	'c_winlibs':     '[]',    # we define our own Windows libraries
 	'cpp_std':       'c++11', # strict C++11
-	'cpp_eh':        'sc',    # shut the compiler up in some cases
 	'cpp_winlibs':   '[]',    # likewise as with c_winlibs
 }
 foreach name, value : libui_forced_options
@@ -118,6 +117,13 @@ libui_manifest_args = []
 if libui_mode == 'static'
 	libui_project_compile_args += ['-D_UI_STATIC']
 	libui_manifest_args = ['-D_UI_STATIC']
+endif
+
+if not libui_is_debug
+	libui_project_compile_args += ['-DLIBUI_NO_BREAK']
+endif
+if get_option('b_ndebug') == 'true'
+	libui_project_compile_args += ['-DLIBUI_NO_DEBUG']
 endif
 
 add_project_arguments(libui_project_compile_args,

@@ -53,6 +53,13 @@ extern WCHAR *itoutf16(int i);
 #define _ws2n(m) L ## #m
 #define _wsn(m) _ws2n(m)
 #define debugargs const WCHAR *file, const WCHAR *line, const WCHAR *func
+
+#ifdef LIBUI_NO_DEBUG
+#define _logLastError(...) 0
+#define logLastError(s) 0
+#define _logHRESULT(...) 0
+#define logHRESULT(s, hr) 0
+#else  // LIBUI_NO_DEBUG
 extern HRESULT _logLastError(debugargs, const WCHAR *s);
 #ifdef _MSC_VER
 #define logLastError(s) _logLastError(_ws(__FILE__), _wsn(__LINE__), _ws(__FUNCTION__), s)
@@ -65,6 +72,7 @@ extern HRESULT _logHRESULT(debugargs, const WCHAR *s, HRESULT hr);
 #else
 #define logHRESULT(s, hr) _logHRESULT(_ws(__FILE__), _wsn(__LINE__), L"TODO none of the function name macros are macros in MinGW", s, hr)
 #endif
+#endif  // LIBUI_NO_DEBUG
 
 // winutil.cpp
 extern int windowClassOf(HWND hwnd, ...);

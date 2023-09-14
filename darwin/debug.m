@@ -1,4 +1,5 @@
 // 13 may 2016
+#ifndef LIBUI_NO_DEBUG
 #import "uipriv_darwin.h"
 
 // LONGTERM don't halt on release builds
@@ -15,5 +16,9 @@ void uiprivRealBug(const char *file, const char *line, const char *func, const c
 	[formatted release];
 	NSLog(@"%@", str);
 	[str release];
+#ifndef LIBUI_NO_BREAK
 	__builtin_trap();
+#endif
 }
+
+#endif

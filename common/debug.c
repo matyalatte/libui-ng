@@ -1,4 +1,5 @@
 // 13 may 2016
+#ifndef LIBUI_NO_DEBUG
 #include "../ui.h"
 #include "uipriv.h"
 
@@ -19,3 +20,5 @@ void uiprivDoUserBug(const char *file, const char *line, const char *func, const
 	uiprivRealBug(file, line, func, "You have a bug: ", format, ap);
 	va_end(ap);
 }
+
+#endif  // LIBUI_NO_DEBUG
