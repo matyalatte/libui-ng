@@ -1226,6 +1226,25 @@ _UI_EXTERN uiSpinbox *uiNewSpinbox(int min, int max);
  */
 _UI_EXTERN uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision);
 
+/**
+ * Creates a new spinbox with extra parameters.
+ *
+ * The initial spinbox value equals the minimum value.
+ *
+ * In the current implementation @p min and @p max are swapped if `min>max`.
+ * This may change in the future though. See TODO.
+ *
+ * @param min Minimum value.
+ * @param max Maximum value.
+ * @param precision Allowed number of digits for value.
+ * @param step The increment value for the arrow buttons.
+ * @param wrapped Allow to wrap the min-max values.
+ * @returns A new uiSpinbox instance.
+ * @todo complain or disallow min>max?
+ * @memberof uiSpinbox @static
+ */
+_UI_EXTERN uiSpinbox *uiNewSpinboxDoubleEx(double min, double max, int precision, double step, int wrapped);
+
 
 /**
  * A control to display and modify integer values via a user draggable slider.

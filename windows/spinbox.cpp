@@ -24,6 +24,8 @@ struct uiSpinbox {
 
 	// The minimum value
 	double minimum;
+
+	int wrapped;
 };
 
 // utility functions
@@ -92,6 +94,14 @@ static BOOL onWM_NOTIFY(uiControl *c, HWND hwnd, NMHDR *nmhdr, LRESULT *lResult)
 
 	lpnmud = (LPNMUPDOWN )nmhdr;
 	value = s->value + (-(double)lpnmud->iDelta) * s->step_size;
+
+	if (s->wrapped) {
+		if (value > s->maximum) {
+			value = s->minimum;
+		} else if (value < s->minimum) {
+			value = s->maximum;
+		}
+	}
 
 	update_value(s, value);
 
@@ -235,9 +245,15 @@ static void onResize(uiWindowsControl *c)
 
 uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
 {
+	int precision_clamped = fmax(0, fmin(20, precision));
+	double step = 1.0 / pow(10.0, precision_clamped);
+	return uiNewSpinboxDoubleEx(min, max, precision_clamped, step, 0);
+}
+
+uiSpinbox *uiNewSpinboxDoubleEx(double min, double max, int precision, double step, int wrapped)
+{
 	uiSpinbox *s;
 	double temp;
-	double step;
 	int precision_clamped;
 
 	if (min >= max) {
@@ -247,7 +263,6 @@ uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
 	}
 
 	precision_clamped = fmax(0, fmin(20, precision));
-	step = 1.0 / pow(10.0, precision_clamped);
 
 	uiWindowsNewControl(uiSpinbox, s);
 
@@ -272,6 +287,7 @@ uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
 	s->precision = precision_clamped;
 	s->minimum = min;
 	s->maximum = max;
+	s->wrapped = wrapped;
 
 	update_value(s, 0);
 
@@ -282,5 +298,5 @@ uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
 
 uiSpinbox *uiNewSpinbox(int min, int max)
 {
-	return uiNewSpinboxDouble((double)min, (double) max, 0);
+	return uiNewSpinboxDoubleEx((double)min, (double) max, 0, 1, 0);
 }

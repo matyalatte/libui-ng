@@ -29,6 +29,8 @@ struct uiSpinbox {
 	void (*onChanged)(uiSpinbox *, void *);
 	void *onChangedData;
 	int precision;
+	double step;
+	int wrapped;
 };
 
 // yes folks, this varies by operating system! woo!
@@ -61,12 +63,11 @@ static CGFloat stepperYDelta(void)
 		[self->tf setFormatter:self->formatter];
 
 		self->stepper = [[NSStepper alloc] initWithFrame:NSZeroRect];
-		[self->stepper setValueWraps:NO];
+		if (!sb->wrapped)
+			[self->stepper setValueWraps:NO];
 		[self->stepper setAutorepeat:YES];              // hold mouse button to step repeatedly
 		[self->stepper setTranslatesAutoresizingMaskIntoConstraints:NO];
-
-		double step = 1.0 / pow(10.0, sb->precision);
-		[self->stepper setIncrement:step];
+		[self->stepper setIncrement:sb->step];
 
 		[self->tf setDelegate:self];
 		[self->stepper setTarget:self];
@@ -221,10 +222,17 @@ static void defaultOnChanged(uiSpinbox *s, void *data)
 
 uiSpinbox *uiNewSpinbox(int min, int max)
 {
-	return uiNewSpinboxDouble((double)min, (double)max, 0);
+	return uiNewSpinboxDoubleEx((double)min, (double)max, 0, 1, 0);
 }
 
 uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
+{
+	int precision_clamped = fmax(0, fmin(20, precision));
+	double step = 1.0 / pow(10.0, precision_clamped);
+	return uiNewSpinboxDoubleEx(min, max, precision_clamped, step, 0);
+}
+
+uiSpinbox *uiNewSpinboxDoubleEx(double min, double max, int precision, double step, int wrapped)
 {
 	uiSpinbox *s;
 	double temp;
@@ -238,7 +246,8 @@ uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
 	uiDarwinNewControl(uiSpinbox, s);
 
 	s->precision = fmax(0, fmin(20, precision));
-
+	s->step = step;
+	s->wrapped = wrapped;
 	s->spinbox = [[libui_spinbox alloc] initWithFrame:NSZeroRect spinbox:s];
 	[s->spinbox setMinimum:min];
 	[s->spinbox setMaximum:max];

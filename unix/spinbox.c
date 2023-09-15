@@ -71,14 +71,20 @@ void uiSpinboxOnChanged(uiSpinbox *s, void (*f)(uiSpinbox *, void *), void *data
 
 uiSpinbox *uiNewSpinbox(int min, int max)
 {
-	return uiNewSpinboxDouble((double) min, (double) max, 0);
+	return uiNewSpinboxDoubleEx((double) min, (double) max, 0, 1, 0);
 }
 
 uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
 {
+	int precision_clamped = fmax(0, fmin(20, precision));
+	double step = 1.0 / pow(10.0, precision_clamped);
+	return uiNewSpinboxDoubleEx(min, max, precision_clamped, step, 0);
+}
+
+uiSpinbox *uiNewSpinboxDoubleEx(double min, double max, int precision, double step, int wrapped)
+{
 	uiSpinbox *s;
 	double temp;
-	double step;
 	int precision_clamped;
 
 	if (min >= max) {
@@ -95,10 +101,8 @@ uiSpinbox *uiNewSpinboxDouble(double min, double max, int precision)
 
 	precision_clamped = fmax(0, fmin(20, precision));
 	gtk_spin_button_set_digits(s->spinButton, precision_clamped);
-	if (precision_clamped != 0) {
-		step = 1.0 / pow(10.0, precision_clamped);
-		gtk_spin_button_set_increments(s->spinButton, step, step * 10);
-	}
+	gtk_spin_button_set_increments(s->spinButton, step, step * 10);
+	gtk_spin_button_set_wrap(s->spinButton, wrapped);
 	s->precision = precision_clamped;
 
 	s->onChangedSignal = g_signal_connect(s->spinButton, "value-changed", G_CALLBACK(onChanged), s);
