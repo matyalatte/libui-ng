@@ -106,6 +106,15 @@ static BOOL stepsIsRunning;
 	return NO;
 }
 
+-(void)applicationDidFinishLaunching:(NSNotification *)notification
+{
+	// don't set the activation policy outside this function.
+	// see https://github.com/libui-ng/libui-ng/issues/225
+	// don't check for a NO return; something (launch services?) causes running from application bundles to always return NO when asking to change activation policy, even if the change is to the same activation policy!
+	// see https://github.com/andlabs/ui/issues/6
+	[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+}
+
 @end
 
 uiInitOptions uiprivOptions;
@@ -115,9 +124,6 @@ const char *uiInit(uiInitOptions *o)
 	@autoreleasepool {
 		uiprivOptions = *o;
 		app = [[uiprivApplicationClass sharedApplication] retain];
-		// don't check for a NO return; something (launch services?) causes running from application bundles to always return NO when asking to change activation policy, even if the change is to the same activation policy!
-		// see https://github.com/andlabs/ui/issues/6
-		[uiprivNSApp() setActivationPolicy:NSApplicationActivationPolicyRegular];
 		delegate = [uiprivAppDelegate new];
 		[uiprivNSApp() setDelegate:delegate];
 
