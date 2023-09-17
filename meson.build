@@ -60,7 +60,7 @@ if libui_mode == 'both'
 	error('sorry, but libui does not support building both shared and static libraries at the same time, because Windows resource file rules differ between the two')
 endif
 
-libui_is_debug = get_option('buildtype').startswith('debug')
+libui_is_debug = get_option('buildtype').startswith('debug') or (get_option('buildtype').startswith('custom') and get_option('debug'))
 
 libui_project_compile_args = []
 libui_project_link_args = []
@@ -93,6 +93,15 @@ if libui_MSVC
 		'/INCREMENTAL:NO',
 		'/MANIFEST:NO',
 	]
+
+	if (get_option('optimization') == 's')
+		libui_project_compile_args += ['/Os']
+	endif
+
+	if (not libui_is_debug)
+		libui_project_compile_args += ['/GL']
+		libui_project_link_args += ['/OPT:ICF', '/LTCG']
+	endif
 
 	# TODO autogenerate a .def file?
 else
