@@ -189,6 +189,7 @@ static void onOpenFolderClicked(uiButton *b, void *data)
 	uiFreeText(filename);
 }
 
+
 static void onSaveFileClicked(uiButton *b, void *data)
 {
 	uiEntry *entry = uiEntry(data);
@@ -202,6 +203,71 @@ static void onSaveFileClicked(uiButton *b, void *data)
 	uiEntrySetText(entry, filename);
 	uiFreeText(filename);
 }
+
+static void onOpenFileWithParamsClicked(uiButton *b, void *data)
+{
+	uiEntry *entry = uiEntry(data);
+	char *filename;
+	uiFileDialogParams fparams = {0};
+
+	fparams.filterCount = 3;
+	fparams.filters = (uiFileDialogParamsFilter[]){
+		{"Text File (*.txt)", 1, (const char *[]){"*.txt"}},
+		{"JPEG File (*.jpg, *.jpeg)", 2, (const char *[]){"*.jpg", "*.jpeg"}},
+		{"Any File", 1, (const char *[]){"*"}},
+	};
+
+	filename = uiOpenFileWithParams(mainwin, &fparams);
+	if (filename == NULL) {
+		uiEntrySetText(entry, "(cancelled)");
+		return;
+	}
+	uiEntrySetText(entry, filename);
+	uiFreeText(filename);
+}
+
+static void onOpenFolderWithParamsClicked(uiButton *b, void *data)
+{
+	uiEntry *entry = uiEntry(data);
+	char *filename;
+	uiFileDialogParams fparams = {0};
+
+	#ifdef _WIN32
+	fparams.defaultPath = "C:\\";
+	#else
+	fparams.defaultPath = "/";
+	#endif
+
+	filename = uiOpenFolderWithParams(mainwin, &fparams);
+	if (filename == NULL) {
+		uiEntrySetText(entry, "(cancelled)");
+		return;
+	}
+	uiEntrySetText(entry, filename);
+	uiFreeText(filename);
+}
+
+static void onSaveFileWithParamsClicked(uiButton *b, void *data)
+{
+	uiEntry *entry = uiEntry(data);
+	char *filename;
+	uiFileDialogParams fparams = {0};
+
+	fparams.defaultName = "untitled";
+	fparams.filterCount = 1;
+	fparams.filters = (uiFileDialogParamsFilter[]){
+		{"Text File (*.txt)", 1, (const char *[]){"*.txt"}},
+	};
+
+	filename = uiSaveFileWithParams(mainwin, &fparams);
+	if (filename == NULL) {
+		uiEntrySetText(entry, "(cancelled)");
+		return;
+	}
+	uiEntrySetText(entry, filename);
+	uiFreeText(filename);
+}
+
 
 static void onMsgBoxClicked(uiButton *b, void *data)
 {
@@ -262,7 +328,7 @@ static uiControl *makeDataChoosersPage(void)
 	uiGridSetPadded(grid, 1);
 	uiBoxAppend(vbox, uiControl(grid), 0);
 
-	button = uiNewButton("  Open File  ");
+	button = uiNewButton("Open File");
 	entry = uiNewEntry();
 	uiEntrySetReadOnly(entry, 1);
 	uiButtonOnClicked(button, onOpenFileClicked, entry);
@@ -284,7 +350,7 @@ static uiControl *makeDataChoosersPage(void)
 		1, 1, 1, 1,
 		1, uiAlignFill, 0, uiAlignFill);
 
-	button = uiNewButton("  Save File  ");
+	button = uiNewButton("Save File");
 	entry = uiNewEntry();
 	uiEntrySetReadOnly(entry, 1);
 	uiButtonOnClicked(button, onSaveFileClicked, entry);
@@ -295,10 +361,43 @@ static uiControl *makeDataChoosersPage(void)
 		1, 2, 1, 1,
 		1, uiAlignFill, 0, uiAlignFill);
 
+	button = uiNewButton("Open File (Advanced)");
+	entry = uiNewEntry();
+	uiEntrySetReadOnly(entry, 1);
+	uiButtonOnClicked(button, onOpenFileWithParamsClicked, entry);
+	uiGridAppend(grid, uiControl(button),
+		0, 3, 1, 1,
+		0, uiAlignFill, 0, uiAlignFill);
+	uiGridAppend(grid, uiControl(entry),
+		1, 3, 1, 1,
+		1, uiAlignFill, 0, uiAlignFill);
+
+	button = uiNewButton("Open Folder (Advanced)");
+	entry = uiNewEntry();
+	uiEntrySetReadOnly(entry, 1);
+	uiButtonOnClicked(button, onOpenFolderWithParamsClicked, entry);
+	uiGridAppend(grid, uiControl(button),
+		0, 4, 1, 1,
+		0, uiAlignFill, 0, uiAlignFill);
+	uiGridAppend(grid, uiControl(entry),
+		1, 4, 1, 1,
+		1, uiAlignFill, 0, uiAlignFill);
+
+	button = uiNewButton("Save File (Advanced)");
+	entry = uiNewEntry();
+	uiEntrySetReadOnly(entry, 1);
+	uiButtonOnClicked(button, onSaveFileWithParamsClicked, entry);
+	uiGridAppend(grid, uiControl(button),
+		0, 5, 1, 1,
+		0, uiAlignFill, 0, uiAlignFill);
+	uiGridAppend(grid, uiControl(entry),
+		1, 5, 1, 1,
+		1, uiAlignFill, 0, uiAlignFill);
+
 	msggrid = uiNewGrid();
 	uiGridSetPadded(msggrid, 1);
 	uiGridAppend(grid, uiControl(msggrid),
-		0, 3, 2, 1,
+		0, 6, 2, 1,
 		0, uiAlignCenter, 0, uiAlignStart);
 
 	button = uiNewButton("Message Box");
