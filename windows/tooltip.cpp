@@ -1,4 +1,4 @@
-#include "windows/uipriv_windows.hpp"
+#include "uipriv_windows.hpp"
 
 static uintptr_t CreateTooltip(HWND hparent, const wchar_t* text) {
     HWND hwndTT = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS, NULL,
