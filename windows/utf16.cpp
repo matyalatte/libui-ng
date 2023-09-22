@@ -125,25 +125,19 @@ void CRLFtoLF(char *s)
 		*t++ = '\0';
 }
 
-// std::to_string() always uses %f; we want %g
-// fortunately std::iostream seems to use %g by default so
 WCHAR *ftoutf16(double d)
 {
-	std::wostringstream ss;
-	std::wstring s;
-
-	ss << d;
-	s = ss.str();		// to be safe
-	return utf16dup(s.c_str());
+	int len = _snwprintf(NULL, 0, L"%g", d);
+	wchar_t* str = (wchar_t *) uiprivAlloc((len + 1) * sizeof (wchar_t), "wchar_t[]");
+	_snwprintf(str, len + 1, L"%g", d);
+	return str;
 }
 
 // to complement the above
 WCHAR *itoutf16(int i)
 {
-	std::wostringstream ss;
-	std::wstring s;
-
-	ss << i;
-	s = ss.str();		// to be safe
-	return utf16dup(s.c_str());
+	int len = _snwprintf(NULL, 0, L"%d", i);
+	wchar_t* str = (wchar_t *) uiprivAlloc((len + 1) * sizeof (wchar_t), "wchar_t[]");
+	_snwprintf(str, len + 1, L"%d", i);
+	return str;
 }
