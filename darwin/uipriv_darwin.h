@@ -100,7 +100,13 @@ extern void uiprivInitAlloc(void);
 extern void uiprivUninitAlloc(void);
 
 // autolayout.m
+
+#ifndef LIBUI_NO_DEBUG
 extern NSLayoutConstraint *uiprivMkConstraint(id view1, NSLayoutAttribute attr1, NSLayoutRelation relation, id view2, NSLayoutAttribute attr2, CGFloat multiplier, CGFloat c, NSString *desc);
+#else
+#define uiprivMkConstraint(view1, attr1, relation, view2, attr2, multiplier, c, desc) uiprivMkConstraintRelease(view1, attr1, relation, view2, attr2, multiplier, c)
+extern NSLayoutConstraint *uiprivMkConstraintRelease(id view1, NSLayoutAttribute attr1, NSLayoutRelation relation, id view2, NSLayoutAttribute attr2, CGFloat multiplier, CGFloat c);
+#endif
 extern void uiprivJiggleViewLayout(NSView *view);
 typedef struct uiprivSingleChildConstraints uiprivSingleChildConstraints;
 struct uiprivSingleChildConstraints {

@@ -6,7 +6,11 @@ static GPtrArray *allocations;
 
 #define UINT8(p) ((uint8_t *) (p))
 #define PVOID(p) ((void *) (p))
+#ifndef LIBUI_NO_DEBUG
 #define EXTRA (sizeof (size_t) + sizeof (const char **))
+#else
+#define EXTRA 0
+#endif
 #define DATA(p) PVOID(UINT8(p) + EXTRA)
 #define BASE(p) PVOID(UINT8(p) - EXTRA)
 #define SIZE(p) ((size_t *) (p))
@@ -38,7 +42,9 @@ void uiprivUninitAlloc(void)
 		g_ptr_array_free(allocations, TRUE);
 		return;
 	}
+#ifndef LIBUI_NO_DEBUG
 	g_ptr_array_foreach(allocations, uninitComplain, &str);
+#endif
 	uiprivUserBug("Some data was leaked; either you left a uiControl lying around or there's a bug in libui itself. Leaked data:\n%s", str);
 	g_free(str);
 }
@@ -49,7 +55,9 @@ void *uiprivAlloc(size_t size, const char *type)
 
 	out = g_malloc0(EXTRA + size);
 	*SIZE(out) = size;
+#ifndef LIBUI_NO_DEBUG
 	*TYPE(out) = type;
+#endif
 	g_ptr_array_add(allocations, out);
 	return DATA(out);
 }

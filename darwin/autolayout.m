@@ -1,7 +1,11 @@
 // 15 august 2015
 #import "uipriv_darwin.h"
 
+#ifndef LIBUI_NO_DEBUG
 NSLayoutConstraint *uiprivMkConstraint(id view1, NSLayoutAttribute attr1, NSLayoutRelation relation, id view2, NSLayoutAttribute attr2, CGFloat multiplier, CGFloat c, NSString *desc)
+#else
+NSLayoutConstraint *uiprivMkConstraintRelease(id view1, NSLayoutAttribute attr1, NSLayoutRelation relation, id view2, NSLayoutAttribute attr2, CGFloat multiplier, CGFloat c)
+#endif
 {
 	NSLayoutConstraint *constraint;
 
@@ -12,7 +16,9 @@ NSLayoutConstraint *uiprivMkConstraint(id view1, NSLayoutAttribute attr1, NSLayo
 		attribute:attr2
 		multiplier:multiplier
 		constant:c];
+#ifndef LIBUI_NO_DEBUG
 	uiprivFUTURE_NSLayoutConstraint_setIdentifier(constraint, desc);
+#endif
 	return constraint;
 }
 

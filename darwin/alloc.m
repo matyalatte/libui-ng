@@ -13,7 +13,11 @@ void uiprivInitAlloc(void)
 
 #define UINT8(p) ((uint8_t *) (p))
 #define PVOID(p) ((void *) (p))
+#ifndef LIBUI_NO_DEBUG
 #define EXTRA (sizeof (size_t) + sizeof (const char **))
+#else
+#define EXTRA 0
+#endif
 #define DATA(p) PVOID(UINT8(p) + EXTRA)
 #define BASE(p) PVOID(UINT8(p) - EXTRA)
 #define SIZE(p) ((size_t *) (p))
@@ -38,12 +42,14 @@ void uiprivUninitAlloc(void)
 		return;
 	}
 	str = [NSMutableString new];
+#ifndef LIBUI_NO_DEBUG
 	for (v in allocations) {
 		void *ptr;
 
 		ptr = [v pointerValue];
 		[str appendString:[NSString stringWithFormat:@"%p %s\n", ptr, *TYPE(ptr)]];
 	}
+#endif
 	uiprivUserBug("Some data was leaked; either you left a uiControl lying around or there's a bug in libui itself. Leaked data:\n%s", [str UTF8String]);
 	[str release];
 }
@@ -59,7 +65,9 @@ void *uiprivAlloc(size_t size, const char *type)
 	}
 	memset(DATA(out), 0, size);
 	*SIZE(out) = size;
+#ifndef LIBUI_NO_DEBUG
 	*TYPE(out) = type;
+#endif
 	[allocations addObject:[NSValue valueWithPointer:out]];
 	return DATA(out);
 }
