@@ -13,16 +13,25 @@ void initAlloc(void)
 
 void uninitAlloc(void)
 {
-	std::ostringstream oss;
-	std::string ossstr;		// keep alive, just to be safe
-
 	if (heap.size() == 0)
 		return;
-	for (const auto &alloc : heap)
-		// note the void * cast; otherwise it'll be treated as a string
-		oss << (void *) (alloc.first) << " " << types[alloc.second] << "\n";
-	ossstr = oss.str();
-	uiprivUserBug("Some data was leaked; either you left a uiControl lying around or there's a bug in libui itself. Leaked data:\n%s", ossstr.c_str());
+
+	char *out;
+	out = new char[1];
+	out[0] = 0;
+
+	for (const auto &alloc : heap) {
+		int len;
+		char *new_out;
+		len = snprintf(NULL, 0, "%s%p %s\n", out, (void*)(alloc.first), types[alloc.second]);
+		new_out = new char[len + 1];
+		new_out[len] = 0;
+		snprintf(new_out, len + 1, "%s%p %s\n", out, (void*)(alloc.first), types[alloc.second]);
+		delete[] out;
+		out = new_out;
+	}
+	uiprivUserBug("Some data was leaked; either you left a uiControl lying around or there's a bug in libui itself. Leaked data:\n%s", out);
+	delete[] out;
 }
 
 #define rawBytes(pa) (&((*pa)[0]))
