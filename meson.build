@@ -177,8 +177,8 @@ install_headers('ui.h')
 
 conf_data = configuration_data()
 
-git_date = run_command('git', 'show', '-s', '--format=%ci', check: true)
-git_date_parsed = git_date.stdout().strip().substring(0, 10).split('-')
+git_date = run_command('git', 'show', '-s', '--date=format-local:%Y-%m-%d', '--format=%cd', env: {'TZ': 'UTC0'}, check: true)
+git_date_parsed = git_date.stdout().strip().split('-')
 git_hash_short = run_command('git', 'rev-parse', '--short', 'HEAD', check: true)
 
 conf_data.set('year', git_date_parsed[0])
