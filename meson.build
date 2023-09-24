@@ -176,13 +176,18 @@ install_headers('ui.h')
 # TODO when the API is stable enough to be versioned, create a pkg-config file (https://mesonbuild.com/Pkgconfig-module.html) and a declare_dependency() section too
 
 conf_data = configuration_data()
+
+git_date = run_command('git', 'show', '-s', '--format=%ci', check: true)
+git_date_parsed = git_date.stdout().strip().substring(0, 10).split('-')
 git_hash_short = run_command('git', 'rev-parse', '--short', 'HEAD', check: true)
-git_tag = run_command('git', 'describe', '--exact-match', '--tags', check: false)
-if git_tag.returncode() == 0
-	conf_data.set('version', git_tag.stdout().strip())
-else
-	conf_data.set('version', git_hash_short.stdout().strip())
-endif
+
+conf_data.set('year', git_date_parsed[0])
+conf_data.set('month', git_date_parsed[1])
+conf_data.set('month_int', git_date_parsed[1].to_int().to_string())
+conf_data.set('day', git_date_parsed[2])
+conf_data.set('day_int', git_date_parsed[2].to_int().to_string())
+conf_data.set('hash', git_hash_short.stdout().strip())
+
 configure_file(input: 'config.h.in',
 	output: 'config.h',
 	configuration: conf_data)

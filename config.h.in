@@ -1,1 +1,5 @@
-#define UI_VERSION "@version@"
+#define UI_VERSION "@year@.@month@.@day@.@hash@"
+#define UI_VERSION_YEAR @year@
+#define UI_VERSION_MONTH @month_int@
+#define UI_VERSION_DAY @day_int@
+#define UI_VERSION_HASH 0x@hash@

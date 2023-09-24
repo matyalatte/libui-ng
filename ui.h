@@ -62,6 +62,12 @@ struct uiInitOptions {
 };
 
 _UI_EXTERN const char *uiVersion(void);
+_UI_EXTERN int *uiVersionYear(void);
+_UI_EXTERN int *uiVersionMonth(void);
+_UI_EXTERN int *uiVersionDay(void);
+_UI_EXTERN int *uiVersionHash(void);
+_UI_EXTERN int *uiVersionNumber(void);
+
 _UI_EXTERN const char *uiInit(uiInitOptions *options);
 _UI_EXTERN void uiUninit(void);
 _UI_EXTERN void uiFreeInitError(const char *err);
