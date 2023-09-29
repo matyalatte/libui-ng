@@ -120,3 +120,17 @@ uiMultilineEntry *uiNewNonWrappingMultilineEntry(void)
 {
 	return finishMultilineEntry(GTK_POLICY_AUTOMATIC, GTK_WRAP_NONE);
 }
+
+void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace) {
+	GtkStyleContext* widget = gtk_widget_get_style_context(GTK_WIDGET(e->textview));
+	gboolean has_monospace = gtk_style_context_has_class(widget, "monospace");
+	if (!has_monospace && monospace)
+		gtk_style_context_add_class(widget, "monospace");
+	else if (has_monospace && !monospace)
+		gtk_style_context_remove_class(widget, "monospace");
+}
+
+int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e) {
+	GtkStyleContext* widget = gtk_widget_get_style_context(GTK_WIDGET(e->textview));
+	return (int)gtk_style_context_has_class(GTK_WIDGET(e->textview), "monospace");
+}

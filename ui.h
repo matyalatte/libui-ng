@@ -4218,6 +4218,11 @@ _UI_EXTERN uintptr_t uiTooltipSetControl(uiControl* c, const char* text);
 // You should use this to free the tooltip window on Windows.
 _UI_EXTERN void uiTooltipDestroy(uintptr_t tooltip);
 
+#ifdef __linux__
+_UI_EXTERN void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace);
+_UI_EXTERN int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
