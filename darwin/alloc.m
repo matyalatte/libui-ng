@@ -16,7 +16,7 @@ void uiprivInitAlloc(void)
 #ifndef LIBUI_NO_DEBUG
 #define EXTRA (sizeof (size_t) + sizeof (const char **))
 #else
-#define EXTRA 0
+#define EXTRA sizeof (size_t)
 #endif
 #define DATA(p) PVOID(UINT8(p) + EXTRA)
 #define BASE(p) PVOID(UINT8(p) - EXTRA)
