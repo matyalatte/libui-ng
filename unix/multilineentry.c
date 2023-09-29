@@ -134,3 +134,16 @@ int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e) {
 	GtkStyleContext* widget = gtk_widget_get_style_context(GTK_WIDGET(e->textview));
 	return (int)gtk_style_context_has_class(GTK_WIDGET(e->textview), "monospace");
 }
+
+static gboolean scroll_to_end(gpointer data)
+{
+  uiMultilineEntry *e = data;
+  GtkTextIter end_iter;
+  gtk_text_buffer_get_end_iter(e->textbuf, &end_iter);
+  gtk_text_view_scroll_to_iter(e->textview, &end_iter, 0, TRUE, 0, 0);
+  return G_SOURCE_REMOVE;
+}
+
+void uiUnixMuntilineEntryScrollToEnd(uiMultilineEntry *e) {
+   g_idle_add((GSourceFunc)scroll_to_end, e);
+}

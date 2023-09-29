@@ -4221,6 +4221,7 @@ _UI_EXTERN void uiTooltipDestroy(uintptr_t tooltip);
 #ifdef __linux__
 _UI_EXTERN void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace);
 _UI_EXTERN int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e);
+_UI_EXTERN void uiUnixMuntilineEntryScrollToEnd(uiMultilineEntry *e);
 #endif
 
 #ifdef __cplusplus
