@@ -34,16 +34,7 @@ static char *runSavePanel(NSWindow *parent, NSSavePanel *s)
 
 char *uiOpenFile(uiWindow *parent)
 {
-	NSOpenPanel *o;
-
-	o = [NSOpenPanel openPanel];
-	[o setCanChooseFiles:YES];
-	[o setCanChooseDirectories:NO];
-	[o setResolvesAliases:NO];
-	[o setAllowsMultipleSelection:NO];
-	setupSavePanel(o);
-	// panel is autoreleased
-	return runSavePanel(windowWindow(parent), o);
+	uiOpenFileWithParams(parent, NULL);
 }
 
 char *uiOpenFolder(uiWindow *parent)
@@ -70,11 +61,51 @@ char *uiSaveFile(uiWindow *parent)
 	return runSavePanel(windowWindow(parent), s);
 }
 
+static char* toDarwinPattern(const char* pattern) {
+	// Need to remove "*.*" from pattern.
+	char* ret = pattern;
+	if (ret[0] == "*"[0])
+		ret++;
+	if (ret[0] == "."[0])
+		ret++;
+	if (ret[0] == "*"[0])
+		ret++;
+	return ret;
+}
+
 char *uiOpenFileWithParams(uiWindow *parent, uiFileDialogParams *params)
 {
-	// TODO
-	// uiprivImplBug("Not yet implemented.");
-	return uiOpenFile(parent);
+	NSOpenPanel *o;
+
+	o = [NSOpenPanel openPanel];
+	[o setCanChooseFiles:YES];
+	[o setCanChooseDirectories:NO];
+	[o setResolvesAliases:NO];
+	[o setAllowsMultipleSelection:NO];
+	setupSavePanel(o);
+	NSMutableArray* types = [[NSMutableArray alloc] init];
+
+	if (params != NULL) {
+		if (params->filters != NULL) {
+			for (size_t s = 0; s < params->filterCount; s++) {
+				// Add all of the patterns for this filter
+				for (size_t pattern = 0; pattern < params->filters[s].patternCount; pattern++) {
+                    [types addObject: uiprivToNSString(toDarwinPattern(params->filters[s].patterns[pattern]))];
+				}
+			}
+			[o setAllowedFileTypes:types];
+			//[o setAllowsOtherFileTypes:NO];
+		} else {
+			if (params->filterCount != 0) {
+				uiprivUserBug("Filter count must be 0 (not %d) if the filters list is NULL.", params->filterCount);
+			}
+		}
+	}
+
+	[types autorelease];
+
+	// panel is autoreleased
+	return runSavePanel(windowWindow(parent), o);
 }
 
 char *uiOpenFolderWithParams(uiWindow *parent, uiFileDialogParams *params)
