@@ -114,7 +114,7 @@ static void msgbox(GtkWindow *parent, const char *title, const char *description
 
 void uiMsgBox(uiWindow *parent, const char *title, const char *description)
 {
-	msgbox(windowWindow(parent), title, description, GTK_MESSAGE_OTHER, GTK_BUTTONS_OK);
+	msgbox(windowWindow(parent), title, description, GTK_MESSAGE_INFO, GTK_BUTTONS_OK);
 }
 
 void uiMsgBoxError(uiWindow *parent, const char *title, const char *description)

@@ -291,7 +291,7 @@ static void msgbox(HWND parent, const char *title, const char *description, TASK
 	wtitle = toUTF16(title);
 	wdescription = toUTF16(description);
 
-	hr = TaskDialog(parent, NULL, NULL, wtitle, wdescription, buttons, icon, NULL);
+	hr = TaskDialog(parent, NULL, wtitle, NULL, wdescription, buttons, icon, NULL);
 	if (hr != S_OK)
 		logHRESULT(L"error showing task dialog", hr);
 
@@ -302,7 +302,7 @@ static void msgbox(HWND parent, const char *title, const char *description, TASK
 void uiMsgBox(uiWindow *parent, const char *title, const char *description)
 {
 	disableAllWindowsExcept(parent);
-	msgbox(windowHWND(parent), title, description, TDCBF_OK_BUTTON, NULL);
+	msgbox(windowHWND(parent), title, description, TDCBF_OK_BUTTON, TD_INFORMATION_ICON);
 	enableAllWindowsExcept(parent);
 }
 
