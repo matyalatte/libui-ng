@@ -61,3 +61,11 @@ void uiWindowsSizingStandardPadding(uiWindowsSizing *sizing, int *x, int *y)
 	if (y != NULL)
 		*y = dlgUnitsToY(winYPadding, sizing->BaseY);
 }
+
+static void uiWindowsSizingCustomPadding(uiWindowsSizing *sizing, int *x, int *y, int xpad, int ypad)
+{
+	if (x != NULL)
+		*x = dlgUnitsToX(xpad, sizing->BaseX);
+	if (y != NULL)
+		*y = dlgUnitsToY(ypad, sizing->BaseY);
+}

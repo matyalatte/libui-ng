@@ -34,6 +34,7 @@ struct uiGrid {
 
 	int xmin, ymin;
 	int xmax, ymax;
+	int xspace, yspace;
 };
 
 static bool gridRecomputeMinMax(uiGrid *g)
@@ -182,7 +183,7 @@ static void gridPadding(uiGrid *g, int *xpadding, int *ypadding)
 	*ypadding = 0;
 	if (g->padded) {
 		uiWindowsGetSizing(g->hwnd, &sizing);
-		uiWindowsSizingStandardPadding(&sizing, xpadding, ypadding);
+		uiWindowsSizingCustomPadding(&sizing, xpadding, ypadding, g->xspace, g->yspace);
 	}
 }
 
@@ -636,6 +637,14 @@ void uiGridSetPadded(uiGrid *g, int padded)
 	uiWindowsControlMinimumSizeChanged(uiWindowsControl(g));
 }
 
+void uiGridSetSpacing(uiGrid *g, int xspace, int yspace)
+{
+	g->xspace = xspace;
+	g->yspace = yspace;
+	if (xspace > 0 || yspace > 0)
+		uiGridSetPadded(g, 1);
+}
+
 static void onResize(uiWindowsControl *c)
 {
 	gridRelayout(uiGrid(c));
@@ -651,6 +660,8 @@ uiGrid *uiNewGrid(void)
 
 	g->children = new std::vector<struct gridChild *>;
 	g->indexof = new std::map<uiControl *, size_t>;
+	g->xspace = 4;
+	g->yspace = 4;
 
 	return g;
 }

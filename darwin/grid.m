@@ -32,6 +32,7 @@
 	uiGrid *g;
 	NSMutableArray *children;
 	int padded;
+	int spacing;
 
 	NSMutableArray *edges;
 	NSMutableArray *inBetweens;
@@ -48,6 +49,7 @@
 - (void)insert:(gridChild *)gc after:(uiControl *)c at:(uiAt)at;
 - (int)isPadded;
 - (void)setPadded:(int)p;
+- (void)setSpacing:(int)s;
 - (BOOL)hugsTrailing;
 - (BOOL)hugsBottom;
 - (int)nhexpand;
@@ -170,6 +172,7 @@ struct uiGrid {
 	if (self != nil) {
 		self->g = gg;
 		self->padded = 0;
+		self->spacing = uiDarwinPaddingAmount(NULL);
 		self->children = [NSMutableArray new];
 
 		self->edges = [NSMutableArray new];
@@ -228,7 +231,7 @@ struct uiGrid {
 {
 	if (!self->padded)
 		return 0.0;
-	return uiDarwinPaddingAmount(NULL);
+	return self->spacing;
 }
 
 // LONGTERM stop early if all controls are hidden
@@ -631,6 +634,13 @@ dispatch_get_main_queue(),
 		}
 }
 
+- (void)setSpacing:(int)s
+{
+	self->spacing = s;
+	if (s > 0)
+		[self setPadded:1];
+}
+
 - (BOOL)hugsTrailing
 {
 	// only hug if we have horizontally expanding
@@ -786,6 +796,11 @@ int uiGridPadded(uiGrid *g)
 void uiGridSetPadded(uiGrid *g, int padded)
 {
 	[g->view setPadded:padded];
+}
+
+void uiGridSetSpacing(uiGrid *g, int xspace, int yspace)
+{
+	[g->view setSpacing:xspace];
 }
 
 uiGrid *uiNewGrid(void)

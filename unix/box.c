@@ -18,6 +18,7 @@ struct uiBox {
 	GArray *controls;
 	int vertical;
 	int padded;
+	int spacing;
 	GtkSizeGroup *stretchygroup;		// ensures all stretchy controls have the same size
 };
 
@@ -123,12 +124,16 @@ void uiBoxSetPadded(uiBox *b, int padded)
 {
 	b->padded = padded;
 	if (b->padded)
-		if (b->vertical)
-			gtk_box_set_spacing(b->box, uiprivGTKYPadding);
-		else
-			gtk_box_set_spacing(b->box, uiprivGTKXPadding);
+		gtk_box_set_spacing(b->box, b->spacing);
 	else
 		gtk_box_set_spacing(b->box, 0);
+}
+
+void uiBoxSetSpacing(uiBox *b, int spacing)
+{
+	b->spacing = spacing;
+	if (spacing > 0)
+		uiBoxSetPadded(b, 1);
 }
 
 static uiBox *finishNewBox(GtkOrientation orientation)
@@ -147,6 +152,11 @@ static uiBox *finishNewBox(GtkOrientation orientation)
 		b->stretchygroup = gtk_size_group_new(GTK_SIZE_GROUP_VERTICAL);
 	else
 		b->stretchygroup = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	if (b->vertical)
+		b->spacing = uiprivGTKYPadding;
+	else
+		b->spacing = uiprivGTKXPadding;
 
 	b->controls = g_array_new(FALSE, TRUE, sizeof (struct boxChild));
 

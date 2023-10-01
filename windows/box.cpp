@@ -14,6 +14,7 @@ struct uiBox {
 	std::vector<struct boxChild> *controls;
 	int vertical;
 	int padded;
+	int spacing;
 };
 
 static void boxPadding(uiBox *b, int *xpadding, int *ypadding)
@@ -24,7 +25,7 @@ static void boxPadding(uiBox *b, int *xpadding, int *ypadding)
 	*ypadding = 0;
 	if (b->padded) {
 		uiWindowsGetSizing(b->hwnd, &sizing);
-		uiWindowsSizingStandardPadding(&sizing, xpadding, ypadding);
+		uiWindowsSizingCustomPadding(&sizing, xpadding, ypadding, b->spacing, b->spacing);
 	}
 }
 
@@ -291,6 +292,13 @@ void uiBoxSetPadded(uiBox *b, int padded)
 	uiWindowsControlMinimumSizeChanged(uiWindowsControl(b));
 }
 
+void uiBoxSetSpacing(uiBox *b, int spacing)
+{
+	b->spacing = spacing;
+	if (spacing > 0)
+		uiBoxSetPadded(b, 1);
+}
+
 static void onResize(uiWindowsControl *c)
 {
 	boxRelayout(uiBox(c));
@@ -306,6 +314,7 @@ static uiBox *finishNewBox(int vertical)
 
 	b->vertical = vertical;
 	b->controls = new std::vector<struct boxChild>;
+	b->spacing = 4;
 
 	return b;
 }

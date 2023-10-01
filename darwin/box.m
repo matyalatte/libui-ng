@@ -16,6 +16,7 @@
 	NSMutableArray *children;
 	BOOL vertical;
 	int padded;
+	int spacing;
 
 	NSLayoutConstraint *first;
 	NSMutableArray *inBetweens;
@@ -41,6 +42,7 @@
 - (int)numChildren;
 - (int)isPadded;
 - (void)setPadded:(int)p;
+- (void)setSpacing:(int)s;
 - (BOOL)hugsTrailing;
 - (BOOL)hugsBottom;
 - (int)nStretchy;
@@ -70,6 +72,7 @@ struct uiBox {
 		self->b = bb;
 		self->vertical = vert;
 		self->padded = 0;
+		self->spacing = uiDarwinPaddingAmount(NULL);
 		self->children = [NSMutableArray new];
 
 		self->inBetweens = [NSMutableArray new];
@@ -146,7 +149,7 @@ struct uiBox {
 {
 	if (!self->padded)
 		return 0.0;
-	return uiDarwinPaddingAmount(NULL);
+	return self->spacing;
 }
 
 - (void)establishOurConstraints
@@ -336,6 +339,13 @@ struct uiBox {
 		[c setConstant:-padding];
 }
 
+- (void)setSpacing:(int)s
+{
+	self->spacing = s;
+	if (s > 0)
+		[self setPadded:1];
+}
+
 - (BOOL)hugsTrailing
 {
 	if (self->vertical)		// always hug if vertical
@@ -456,6 +466,11 @@ int uiBoxPadded(uiBox *b)
 void uiBoxSetPadded(uiBox *b, int padded)
 {
 	[b->view setPadded:padded];
+}
+
+void uiBoxSetSpacing(uiBox *b, int spacing)
+{
+	[b->view setSpacing:spacing];
 }
 
 static uiBox *finishNewBox(BOOL vertical)

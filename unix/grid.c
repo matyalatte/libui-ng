@@ -17,6 +17,7 @@ struct uiGrid {
 	GtkGrid *grid;
 	GArray *children;
 	int padded;
+	int xspace, yspace;
 };
 
 uiUnixControlAllDefaultsExceptDestroy(uiGrid)
@@ -117,12 +118,20 @@ void uiGridSetPadded(uiGrid *g, int padded)
 {
 	g->padded = padded;
 	if (g->padded) {
-		gtk_grid_set_row_spacing(g->grid, uiprivGTKYPadding);
-		gtk_grid_set_column_spacing(g->grid, uiprivGTKXPadding);
+		gtk_grid_set_row_spacing(g->grid, g->yspace);
+		gtk_grid_set_column_spacing(g->grid, g->xspace);
 	} else {
 		gtk_grid_set_row_spacing(g->grid, 0);
 		gtk_grid_set_column_spacing(g->grid, 0);
 	}
+}
+
+void uiGridSetSpacing(uiGrid *g, int xspace, int yspace)
+{
+	g->xspace = xspace;
+	g->yspace = yspace;
+	if (xspace > 0 || yspace > 0)
+		uiGridSetPadded(g, 1);
 }
 
 uiGrid *uiNewGrid(void)
@@ -134,6 +143,8 @@ uiGrid *uiNewGrid(void)
 	g->widget = gtk_grid_new();
 	g->container = GTK_CONTAINER(g->widget);
 	g->grid = GTK_GRID(g->widget);
+	g->xspace = uiprivGTKXPadding;
+	g->yspace = uiprivGTKYPadding;
 
 	g->children = g_array_new(FALSE, TRUE, sizeof (struct gridChild));
 
