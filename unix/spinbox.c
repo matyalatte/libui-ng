@@ -105,6 +105,11 @@ uiSpinbox *uiNewSpinboxDoubleEx(double min, double max, int precision, double st
 	gtk_spin_button_set_wrap(s->spinButton, wrapped);
 	s->precision = precision_clamped;
 
+	gint width;
+	gint height;
+	gtk_widget_get_size_request(s->widget, &width, &height);
+	gtk_widget_set_size_request(s->widget, fmax(width, 190), height);
+
 	s->onChangedSignal = g_signal_connect(s->spinButton, "value-changed", G_CALLBACK(onChanged), s);
 	uiSpinboxOnChanged(s, defaultOnChanged, NULL);
 

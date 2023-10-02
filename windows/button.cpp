@@ -44,8 +44,10 @@ static void uiButtonMinimumSize(uiWindowsControl *c, int *width, int *height)
 	size.cx = 0;		// explicitly ask for ideal size
 	size.cy = 0;
 	if (SendMessageW(b->hwnd, BCM_GETIDEALSIZE, 0, (LPARAM) (&size)) != FALSE) {
-		*width = size.cx;
+		*width = size.cx + 12;
 		*height = size.cy;
+		if (*height < 24)
+			*height = 24;
 		return;
 	}
 
