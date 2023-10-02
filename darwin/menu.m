@@ -62,9 +62,6 @@ enum uiprivMenuItemType {
 		uiMenuItemSetChecked(self->item, !uiMenuItemChecked(self->item));
 		// fall through
 	default:
-		// System menu items that may have no user callback (Preferences/About)
-		if (self->item == NULL)
-			break;
 		// use the key window as the source of the menu event; it's the active window
 		(*(self->item->onClicked))(self->item, uiprivWindowFromNSWindow([uiprivNSApp() keyWindow]),
 			self->item->onClickedData);
@@ -171,6 +168,7 @@ enum uiprivMenuItemType {
 	// first is About
 	title = [@"About " stringByAppendingString:appName];
 	pitem = [[[uiprivMenuItem alloc] initWithTitle:title uiMenuItem:NULL] autorelease];
+	[pitem setHidden:YES];
 	[appMenu addItem:pitem];
 	self.aboutItem = pitem;
 
@@ -178,6 +176,7 @@ enum uiprivMenuItemType {
 
 	// next is Preferences
 	pitem = [[[uiprivMenuItem alloc] initWithTitle:@"Preferences\u2026" uiMenuItem:NULL] autorelease];
+	[pitem setHidden:YES];
 	[appMenu addItem:pitem];
 	self.preferencesItem = pitem;
 
@@ -210,6 +209,7 @@ enum uiprivMenuItemType {
 	// DON'T use @selector(terminate:) as the action; we handle termination ourselves
 	title = [@"Quit " stringByAppendingString:appName];
 	pitem = [[[uiprivMenuItem alloc] initWithTitle:title uiMenuItem:NULL] autorelease];
+	[pitem setHidden:YES];
 	[appMenu addItem:pitem];
 	self.quitItem = pitem;
 }
@@ -280,14 +280,17 @@ static uiMenuItem *newItem(uiMenu *m, int type, const char *name)
 	case typeQuit:
 		item->item = uiprivAppDelegate().menuManager.quitItem;
 		[item->item setUiMenuItem:item];
+		[item->item setHidden:NO];
 		break;
 	case typePreferences:
 		item->item = uiprivAppDelegate().menuManager.preferencesItem;
 		[item->item setUiMenuItem:item];
+		[item->item setHidden:NO];
 		break;
 	case typeAbout:
 		item->item = uiprivAppDelegate().menuManager.aboutItem;
 		[item->item setUiMenuItem:item];
+		[item->item setHidden:NO];
 		break;
 	default:
 		item->item = [[uiprivMenuItem alloc] initWithTitle:uiprivToNSString(name) uiMenuItem:item];
