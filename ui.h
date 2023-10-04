@@ -4220,6 +4220,7 @@ _UI_EXTERN void uiTooltipDestroy(uintptr_t tooltip);
 
 _UI_EXTERN void uiBoxSetSpacing(uiBox *b, int spacing);
 _UI_EXTERN void uiGridSetSpacing(uiGrid *g, int xspace, int yspace);
+_UI_EXTERN void uiButtonSetMinSize(uiButton* b, int width, int height);
 
 #ifdef __linux__
 _UI_EXTERN void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace);

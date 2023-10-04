@@ -13,6 +13,7 @@ struct uiButton {
 }
 - (id)initWithFrame:(NSRect)frame uiButton:(uiButton *)b;
 - (IBAction)onClicked:(id)sender;
+- (void)setMinSize:(int)width height:(int)height;
 @end
 
 @implementation uiprivButton
@@ -38,6 +39,26 @@ struct uiButton {
 	uiButton *b = self->button;
 
 	(*(b->onClicked))(b, b->onClickedData);
+}
+
+- (void)setMinSize:(int)width height:(int)height
+{
+	NSLayoutConstraint* c;
+	c = uiprivMkConstraint(self,
+		NSLayoutAttributeWidth,
+		NSLayoutRelationGreaterThanOrEqual,
+		nil, NSLayoutAttributeNotAnAttribute,
+		1, width,
+		@"uiButtonSetMinSize width");
+	[self addConstraint:c];
+
+	c = uiprivMkConstraint(self,
+		NSLayoutAttributeHeight,
+		NSLayoutRelationGreaterThanOrEqual,
+		nil, NSLayoutAttributeNotAnAttribute,
+		1, height,
+		@"uiButtonSetMinSize height");
+	[self addConstraint:c];
 }
 
 @end
@@ -86,4 +107,8 @@ uiButton *uiNewButton(const char *text)
 	uiButtonOnClicked(b, defaultOnClicked, NULL);
 
 	return b;
+}
+
+void uiButtonSetMinSize(uiButton *b, int width, int height) {
+	[b->button setMinSize:width height:height];
 }

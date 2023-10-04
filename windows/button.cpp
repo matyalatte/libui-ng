@@ -6,6 +6,8 @@ struct uiButton {
 	HWND hwnd;
 	void (*onClicked)(uiButton *, void *);
 	void *onClickedData;
+	int minWidth;
+	int minHeight;
 };
 
 static BOOL onWM_COMMAND(uiControl *c, HWND hwnd, WORD code, LRESULT *lResult)
@@ -46,8 +48,10 @@ static void uiButtonMinimumSize(uiWindowsControl *c, int *width, int *height)
 	if (SendMessageW(b->hwnd, BCM_GETIDEALSIZE, 0, (LPARAM) (&size)) != FALSE) {
 		*width = size.cx + 12;
 		*height = size.cy;
-		if (*height < 24)
-			*height = 24;
+		if (*width < b->minWidth)
+			*width = b->minWidth;
+		if (*height < b->minHeight)
+			*height = b->minHeight;
 		return;
 	}
 
@@ -97,10 +101,17 @@ uiButton *uiNewButton(const char *text)
 		BS_PUSHBUTTON | WS_TABSTOP,
 		hInstance, NULL,
 		TRUE);
+	b->minWidth = 0;
+	b->minHeight = 0;
 	uiprivFree(wtext);
 
 	uiWindowsRegisterWM_COMMANDHandler(b->hwnd, onWM_COMMAND, uiControl(b));
 	uiButtonOnClicked(b, defaultOnClicked, NULL);
 
 	return b;
+}
+
+void uiButtonSetMinSize(uiButton *b, int width, int height) {
+	b->minWidth = width;
+	b->minHeight = height;
 }

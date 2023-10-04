@@ -39,6 +39,10 @@ void uiButtonOnClicked(uiButton *b, void (*f)(uiButton *, void *), void *data)
 	b->onClickedData = data;
 }
 
+void uiButtonSetMinSize(uiButton* b, int width, int height) {
+	gtk_widget_set_size_request(b->widget, width, height);
+}
+
 uiButton *uiNewButton(const char *text)
 {
 	uiButton *b;
