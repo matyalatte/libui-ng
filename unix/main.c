@@ -146,3 +146,8 @@ void uiTimer(int milliseconds, int (*f)(void *data), void *data)
 	g_timeout_add(milliseconds, doTimer, t);
 	g_hash_table_add(timers, t);
 }
+
+void uiUnixWaitEvents() {
+	while(gtk_events_pending())
+		gtk_main_iteration();
+}

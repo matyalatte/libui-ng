@@ -4226,6 +4226,7 @@ _UI_EXTERN void uiButtonSetMinSize(uiButton* b, int width, int height);
 _UI_EXTERN void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace);
 _UI_EXTERN int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e);
 _UI_EXTERN void uiUnixMuntilineEntryScrollToEnd(uiMultilineEntry *e);
+_UI_EXTERN void uiUnixWaitEvents();
 #endif
 
 #ifdef __cplusplus
