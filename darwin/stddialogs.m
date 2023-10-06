@@ -87,14 +87,18 @@ char *uiOpenFileWithParams(uiWindow *parent, uiFileDialogParams *params)
 
 	if (params != NULL) {
 		if (params->filters != NULL) {
+			BOOL use_filter = YES;
 			for (size_t s = 0; s < params->filterCount; s++) {
 				// Add all of the patterns for this filter
 				for (size_t pattern = 0; pattern < params->filters[s].patternCount; pattern++) {
-                    [types addObject: uiprivToNSString(toDarwinPattern(params->filters[s].patterns[pattern]))];
+					const char* ext = toDarwinPattern(params->filters[s].patterns[pattern]);
+					if (ext[0] == 0)
+						use_filter = NO;
+                    [types addObject: uiprivToNSString(ext)];
 				}
 			}
-			[o setAllowedFileTypes:types];
-			//[o setAllowsOtherFileTypes:NO];
+			if (use_filter)
+				[o setAllowedFileTypes:types];
 		} else {
 			if (params->filterCount != 0) {
 				uiprivUserBug("Filter count must be 0 (not %d) if the filters list is NULL.", params->filterCount);
