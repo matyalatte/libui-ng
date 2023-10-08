@@ -109,7 +109,8 @@ void uiEntrySetText(uiEntry *e, const char *text)
 	e->inhibitChanged = TRUE;
 	uiWindowsSetWindowText(e->hwnd, text);
 	l = (int)strlen(text);
-	Edit_SetSel(e->hwnd, l, l);
+	if (GetFocus() == e->hwnd)
+		Edit_SetSel(e->hwnd, l, l);
 	e->inhibitChanged = FALSE;
 	// don't queue the control for resize; entry sizes are independent of their contents
 }
