@@ -1,6 +1,6 @@
 #include "uipriv_windows.hpp"
 
-static uintptr_t CreateTooltip(HWND hparent, const wchar_t* text) {
+static void *CreateTooltip(HWND hparent, const wchar_t* text) {
     HWND hwndTT = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS, NULL,
         WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
@@ -28,28 +28,18 @@ static uintptr_t CreateTooltip(HWND hparent, const wchar_t* text) {
         uiWindowsEnsureDestroyWindow(hwndTT);
         return NULL;
     }
-    return (uintptr_t)hwndTT;
+    return hwndTT;
 }
 
-uintptr_t uiTooltipSetSpinbox(uiSpinbox* s, const char* text) {
-    HWND child = FindWindowExW((HWND)uiControlHandle(uiControl(s)), NULL, L"edit", NULL);
-    if (!child) {
-        logLastError(L"Failed to get text entry from spinbox.");
-        return NULL;
-    }
-    wchar_t* wtext = toUTF16(text);
-    uintptr_t tooltip = CreateTooltip(child, wtext);
+void uiControlSetTooltip(uiControl *c, const char *tooltip) {
+	if (tooltip == NULL) {
+		if (uiWindowsControl(c)->tooltip == NULL) return;
+		uiWindowsEnsureDestroyWindow((HWND)uiWindowsControl(c)->tooltip);
+		return;
+	}
+    wchar_t *wtext = toUTF16(tooltip);
+    void *ptr = CreateTooltip((HWND)uiControlHandle(c), wtext);
     uiprivFree(wtext);
-    return tooltip;
-}
 
-uintptr_t uiTooltipSetControl(uiControl* c, const char* text) {
-    wchar_t* wtext = toUTF16(text);
-    uintptr_t tooltip = CreateTooltip((HWND)uiControlHandle(c), wtext);
-    uiprivFree(wtext);
-    return tooltip;
-}
-
-void uiTooltipDestroy(uintptr_t tooltip) {
-    uiWindowsEnsureDestroyWindow((HWND)tooltip);
+	uiWindowsControl(c)->tooltip = ptr;
 }

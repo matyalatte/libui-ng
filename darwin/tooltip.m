@@ -1,13 +1,12 @@
 #include "darwin/uipriv_darwin.h"
 
-uintptr_t uiTooltipSetSpinbox(uiSpinbox* s, const char* text) {
-    return uiTooltipSetControl(uiControl(s), text);
-}
+// https://developer.apple.com/documentation/appkit/nsview/1483541-tooltip?language=objc
 
-uintptr_t uiTooltipSetControl(uiControl* c, const char* text) {
-    NSView* view = (NSView*)uiControlHandle(c);
-    view.toolTip = uiprivToNSString(text);
-    return NULL;
+void uiControlSetTooltip(uiControl *c, const char *tooltip) {
+    NSView *view = (NSView *)uiControlHandle(c);
+	if (tooltip == NULL) {
+		view.toolTip = nil;
+	} else {
+	    view.toolTip = uiprivToNSString(text);
+	}
 }
-
-void uiTooltipDestroy(uintptr_t tooltip) {}
