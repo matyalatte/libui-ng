@@ -7,6 +7,6 @@ void uiControlSetTooltip(uiControl *c, const char *tooltip) {
 	if (tooltip == NULL) {
 		view.toolTip = nil;
 	} else {
-		view.toolTip = uiprivToNSString(text);
+		view.toolTip = uiprivToNSString(tooltip);
 	}
 }
