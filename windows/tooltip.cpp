@@ -32,8 +32,7 @@ static HWND createTooltipForControl(HWND hparent, const wchar_t* text) {
 
 void uiControlSetTooltip(uiControl *c, const char *tooltip) {
 	if (tooltip == NULL) {
-		if (uiWindowsControl(c)->tooltip == NULL) return;
-		uiWindowsEnsureDestroyWindow((HWND) uiWindowsControl(c)->tooltip);
+		uiprivDestroyTooltip(c);
 		return;
 	}
 	wchar_t *wtext = toUTF16(tooltip);
@@ -41,4 +40,11 @@ void uiControlSetTooltip(uiControl *c, const char *tooltip) {
 	uiprivFree(wtext);
 
 	uiWindowsControl(c)->tooltip = ptr;
+}
+
+void uiprivDestroyTooltip(uiControl* c) {
+	HWND tooltip = (HWND) uiWindowsControl(c)->tooltip;
+	if (tooltip == NULL) return;
+	uiWindowsEnsureDestroyWindow(tooltip);
+	uiWindowsControl(c)->tooltip = NULL;
 }
