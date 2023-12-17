@@ -7,7 +7,7 @@ static void *CreateTooltip(HWND hparent, const wchar_t* text) {
 		hparent, NULL, hInstance, NULL);
 
 	if (!hwndTT) {
-		printf("ERROR: Failed to create tooltip window.");
+		logLastError(L"Failed to create tooltip window.");
 		return NULL;
 	}
 
