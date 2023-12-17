@@ -35,10 +35,26 @@ void uiControlSetTooltip(uiControl *c, const char *tooltip) {
 		uiprivDestroyTooltip(c);
 		return;
 	}
-	wchar_t *wtext = toUTF16(tooltip);
-	void *ptr = createTooltipForControl((HWND) uiControlHandle(c), wtext);
-	uiprivFree(wtext);
 
+	wchar_t *wtext = toUTF16(tooltip);
+	HWND hparent = (HWND) uiControlHandle(c);
+	HWND child = NULL;
+	void *ptr = NULL;
+
+	switch (c->TypeSignature) {
+	case uiSpinboxSignature:
+		child = FindWindowExW(hparent, NULL, L"edit", NULL);
+		if (!child) {
+			logLastError(L"Failed to get text entry from spinbox.");
+			break;
+		}
+		ptr = createTooltipForControl(child, wtext);
+		break;
+	default:
+		ptr = createTooltipForControl(hparent, wtext);
+	}
+
+	uiprivFree(wtext);
 	uiWindowsControl(c)->tooltip = ptr;
 }
 
