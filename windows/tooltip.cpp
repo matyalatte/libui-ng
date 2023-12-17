@@ -40,6 +40,8 @@ void uiControlSetTooltip(uiControl *c, const char *tooltip) {
 	HWND hparent = (HWND) uiControlHandle(c);
 	HWND child = NULL;
 	void *ptr = NULL;
+	std::vector<HWND> *tooltip_vec;
+	HWND hwndTT;
 
 	switch (c->TypeSignature) {
 	case uiSpinboxSignature:
@@ -50,6 +52,19 @@ void uiControlSetTooltip(uiControl *c, const char *tooltip) {
 		}
 		ptr = createTooltipForControl(child, wtext);
 		break;
+	case uiRadioButtonsSignature:
+		// This works only for existing buttons.
+		// You should run uiRadioButtonsAppend before calling uiControlSetTooltip.
+		tooltip_vec = new std::vector<HWND>(0);
+		child = FindWindowExW(hparent, NULL, L"button", NULL);
+		while (child != NULL) {
+			hwndTT = createTooltipForControl(child, wtext);
+			if (hwndTT != NULL)
+				tooltip_vec->push_back(hwndTT);
+			child = FindWindowExW(hparent, child, L"button", NULL);
+		}
+		ptr = tooltip_vec;
+		break;
 	default:
 		ptr = createTooltipForControl(hparent, wtext);
 	}
@@ -59,8 +74,21 @@ void uiControlSetTooltip(uiControl *c, const char *tooltip) {
 }
 
 void uiprivDestroyTooltip(uiControl* c) {
-	HWND tooltip = (HWND) uiWindowsControl(c)->tooltip;
+	void *tooltip = uiWindowsControl(c)->tooltip;
+	std::vector<HWND> *tooltip_vec;
+
 	if (tooltip == NULL) return;
-	uiWindowsEnsureDestroyWindow(tooltip);
+
+	switch (c->TypeSignature) {
+	case uiRadioButtonsSignature:
+		tooltip_vec = (std::vector<HWND>*) tooltip;
+		for (HWND hwndTT : *tooltip_vec) {
+			uiWindowsEnsureDestroyWindow(hwndTT);
+		}
+		delete tooltip_vec;
+		break;
+	default:
+		uiWindowsEnsureDestroyWindow((HWND) tooltip);
+	}
 	uiWindowsControl(c)->tooltip = NULL;
 }
