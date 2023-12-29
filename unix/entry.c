@@ -36,7 +36,7 @@ static void onFilesDropped(GtkEditable *editable,
 
 	if (gtk_selection_data_get_length(data) == 0 ||
 		gtk_selection_data_get_format(data) != 8 ||
-		e->onFilesDroppedTime == time) {
+		(e->onFilesDroppedTime == time && time != 0)) {
 		gtk_drag_finish(context, FALSE, FALSE, time);
 		return;
 	}
@@ -174,7 +174,7 @@ static uiEntry *finishNewEntry(GtkWidget *w, const gchar *signal)
 	e->onChangedSignal = g_signal_connect(e->widget, signal, G_CALLBACK(onChanged), e);
 	g_signal_connect(e->widget, "drag-data-received", G_CALLBACK(onFilesDropped), e);
 	uiEntryOnChanged(e, defaultOnChanged, NULL);
-	uiEntryOnChanged(e, defaultOnFilesDropped, NULL);
+	uiEntryOnFilesDropped(e, defaultOnFilesDropped, NULL);
 
 	return e;
 }
