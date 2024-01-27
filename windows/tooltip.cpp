@@ -28,6 +28,9 @@ static HWND createTooltipForControl(HWND hparent, const wchar_t* text)
 		uiWindowsEnsureDestroyWindow(hwndTT);
 		return NULL;
 	}
+
+	// Enable multiline tooltips
+	SendMessage(hwndTT, TTM_SETMAXTIPWIDTH, 0, 0);
 	return hwndTT;
 }
 
