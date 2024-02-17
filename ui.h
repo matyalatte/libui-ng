@@ -4224,7 +4224,7 @@ _UI_EXTERN void uiBoxSetSpacing(uiBox *b, int spacing);
 _UI_EXTERN void uiGridSetSpacing(uiGrid *g, int xspace, int yspace);
 _UI_EXTERN void uiButtonSetMinSize(uiButton* b, int width, int height);
 
-#ifdef __linux__
+#if !defined(_WIN32) && !defined(__APPLE__)
 _UI_EXTERN void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace);
 _UI_EXTERN int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e);
 _UI_EXTERN void uiUnixMuntilineEntryScrollToEnd(uiMultilineEntry *e);
