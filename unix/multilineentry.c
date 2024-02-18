@@ -14,9 +14,20 @@ struct uiMultilineEntry {
 	void (*onChanged)(uiMultilineEntry *, void *);
 	void *onChangedData;
 	gulong onChangedSignal;
+	int scrollQueue;
+	guint scrollTag;
 };
 
-uiUnixControlAllDefaults(uiMultilineEntry)
+uiUnixControlAllDefaultsExceptDestroy(uiMultilineEntry)
+
+static void uiMultilineEntryDestroy(uiControl *c)
+{
+	/* TODO is this safe on floating refs? */
+	if (uiMultilineEntry(c)->scrollQueue)
+		g_source_remove(uiMultilineEntry(c)->scrollTag);
+	g_object_unref(uiMultilineEntry(c)->widget);
+	uiFreeControl(c);
+}
 
 static void onChanged(GtkTextBuffer *textbuf, gpointer data)
 {
@@ -107,6 +118,7 @@ static uiMultilineEntry *finishMultilineEntry(GtkPolicyType hpolicy, GtkWrapMode
 
 	e->onChangedSignal = g_signal_connect(e->textbuf, "changed", G_CALLBACK(onChanged), e);
 	uiMultilineEntryOnChanged(e, defaultOnChanged, NULL);
+	e->scrollQueue = 0;
 
 	return e;
 }
@@ -137,13 +149,17 @@ int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e) {
 
 static gboolean scroll_to_end(gpointer data)
 {
-  uiMultilineEntry *e = data;
-  GtkTextIter end_iter;
-  gtk_text_buffer_get_end_iter(e->textbuf, &end_iter);
-  gtk_text_view_scroll_to_iter(e->textview, &end_iter, 0, TRUE, 0, 0);
-  return G_SOURCE_REMOVE;
+	uiMultilineEntry *e = (uiMultilineEntry *) data;
+	GtkTextIter end_iter;
+	gtk_text_buffer_get_end_iter(e->textbuf, &end_iter);
+	gtk_text_view_scroll_to_iter(e->textview, &end_iter, 0, TRUE, 0, 0);
+	e->scrollQueue = 0;
+	return G_SOURCE_REMOVE;
 }
 
 void uiUnixMuntilineEntryScrollToEnd(uiMultilineEntry *e) {
-   g_idle_add((GSourceFunc)scroll_to_end, e);
+	if (!e->scrollQueue) {
+		e->scrollQueue = 1;
+		e->scrollTag = g_idle_add((GSourceFunc)scroll_to_end, e);
+	}
 }
