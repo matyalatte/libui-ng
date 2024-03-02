@@ -11,6 +11,21 @@ uiHaikuDefineControl(
 	dummy								// handle
 )
 
+void uiDateTimePickerTime(uiDateTimePicker *d, struct tm *time)
+{
+	// TODO
+}
+
+void uiDateTimePickerSetTime(uiDateTimePicker *d, const struct tm *time)
+{
+	// TODO
+}
+
+void uiDateTimePickerOnChanged(uiDateTimePicker *d, void (*f)(uiDateTimePicker *, void *), void *data)
+{
+	// TODO
+}
+
 static uiDateTimePicker *finishNewDateTimePicker(void)
 {
 	uiDateTimePicker *d;

@@ -16,6 +16,22 @@ void uiRadioButtonsAppend(uiRadioButtons *r, const char *text)
 	// TODO
 }
 
+int uiRadioButtonsSelected(uiRadioButtons *r)
+{
+	// TODO
+	return -1;
+}
+
+void uiRadioButtonsSetSelected(uiRadioButtons *r, int n)
+{
+	// TODO
+}
+
+void uiRadioButtonsOnSelected(uiRadioButtons *r, void (*f)(uiRadioButtons *, void *), void *data)
+{
+	// TODO
+}
+
 uiRadioButtons *uiNewRadioButtons(void)
 {
 	uiRadioButtons *r;

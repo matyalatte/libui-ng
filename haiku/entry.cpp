@@ -62,3 +62,15 @@ uiEntry *uiNewEntry(void)
 
 	return e;
 }
+
+uiEntry *uiNewPasswordEntry(void)
+{
+	// TODO
+	return uiNewEntry();
+}
+
+uiEntry *uiNewSearchEntry(void)
+{
+	// TODO
+	return uiNewEntry();
+}

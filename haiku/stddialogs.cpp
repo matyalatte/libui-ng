@@ -7,6 +7,12 @@ char *uiOpenFile(uiWindow *parent)
 	return NULL;
 }
 
+char *uiOpenFolder(uiWindow *parent)
+{
+	// TODO
+	return NULL;
+}
+
 char *uiSaveFile(uiWindow *parent)
 {
 	// TODO

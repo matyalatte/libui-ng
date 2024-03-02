@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "uipriv_haiku.hpp"
 
 // LONGTERM don't halt on release builds

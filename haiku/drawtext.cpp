@@ -2,7 +2,6 @@
 #include "draw.hpp"
 
 struct uiDrawTextLayout {
-	dummy;
 };
 
 uiDrawTextLayout *uiDrawNewTextLayout(uiDrawTextLayoutParams *p)

@@ -100,7 +100,7 @@ void uiTableOnRowDoubleClicked(uiTable *t, void (*f)(uiTable *, int, void *), vo
 	// TODO
 }
 
-uiTable *uiNewTable(const char *title)
+uiTable *uiNewTable(uiTableParams *p)
 {
 	uiTable *t;
 

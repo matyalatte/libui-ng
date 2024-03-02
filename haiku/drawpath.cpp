@@ -3,17 +3,11 @@
 #include "draw.hpp"
 using namespace std;
 
-struct uiDrawPath {
-	BShape *shape;
-	uiDrawFillMode fillMode;
-	bool ended;
-};
-
 uiDrawPath *uiDrawNewPath(uiDrawFillMode fillMode)
 {
 	uiDrawPath *p;
 
-	p = uiNew(uiDrawPath);
+	p = uiprivNew(uiDrawPath);
 	p->shape = new BShape();
 	p->fillMode = fillMode;
 	return p;
@@ -22,7 +16,7 @@ uiDrawPath *uiDrawNewPath(uiDrawFillMode fillMode)
 void uiDrawFreePath(uiDrawPath *p)
 {
 	delete p->shape;
-	uiFree(p);
+	uiprivFree(p);
 }
 
 // TODO add ended checks

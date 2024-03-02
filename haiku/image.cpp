@@ -1,7 +1,6 @@
 #include "uipriv_haiku.hpp"
 
 struct uiImage {
-	dummy;
 };
 
 

@@ -23,3 +23,9 @@ uiSeparator *uiNewHorizontalSeparator(void)
 
 	return s;
 }
+
+uiSeparator *uiNewVerticalSeparator(void)
+{
+	// TODO
+	return uiNewHorizontalSeparator();
+}

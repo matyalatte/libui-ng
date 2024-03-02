@@ -16,14 +16,35 @@ void uiComboboxAppend(uiCombobox *c, const char *text)
 	// TODO
 }
 
-intmax_t uiComboboxSelected(uiCombobox *c)
+void uiComboboxInsertAt(uiCombobox *c, int n, const char *text)
+{
+	// TODO
+}
+
+void uiComboboxDelete(uiCombobox *c, int n)
+{
+	// TODO
+}
+
+void uiComboboxClear(uiCombobox *c)
+{
+	// TODO
+}
+
+int uiComboboxNumItems(uiCombobox *c)
+{
+	// TODO
+	return 0;
+}
+
+int uiComboboxSelected(uiCombobox *c)
 {
 	// TODO
 	// return 0 so the area test can work
 	return 0;
 }
 
-void uiComboboxSetSelected(uiCombobox *c, intmax_t n)
+void uiComboboxSetSelected(uiCombobox *c, int n)
 {
 	// TODO
 }
@@ -47,11 +68,6 @@ static uiCombobox *finishNewCombobox(void)
 }
 
 uiCombobox *uiNewCombobox(void)
-{
-	return finishNewCombobox();
-}
-
-uiCombobox *uiNewEditableCombobox(void)
 {
 	return finishNewCombobox();
 }

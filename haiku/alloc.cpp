@@ -32,7 +32,7 @@ void uninitAlloc(void)
 	uiprivImplBug("either you left something around or there's a bug in libui");
 }
 
-void *uiAlloc(size_t size, const char *type)
+void *uiprivAlloc(size_t size, const char *type)
 {
 	void *out;
 
@@ -48,13 +48,13 @@ void *uiAlloc(size_t size, const char *type)
 	return DATA(out);
 }
 
-void *uiRealloc(void *p, size_t xnew, const char *type)
+void *uiprivRealloc(void *p, size_t xnew, const char *type)
 {
 	void *out;
 	size_t *s;
 
 	if (p == NULL)
-		return uiAlloc(xnew, type);
+		return uiprivAlloc(xnew, type);
 	p = BASE(p);
 	out = realloc(p, EXTRA + xnew);
 	if (out == NULL) {
@@ -71,7 +71,7 @@ void *uiRealloc(void *p, size_t xnew, const char *type)
 	return DATA(out);
 }
 
-void uiFree(void *p)
+void uiprivFree(void *p)
 {
 	if (p == NULL)
 		uiprivImplBug("attempt to uiFree(NULL); there's a bug somewhere");

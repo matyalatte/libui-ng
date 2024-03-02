@@ -1,15 +1,6 @@
 // 16 august 2015
 #include "uipriv_haiku.hpp"
 
-static uintmax_t type_uiHaikuControl = 0;
-
-uintmax_t uiHaikuControlType(void)
-{
-	if (type_uiHaikuControl == 0)
-		type_uiHaikuControl = uiRegisterType("uiHaikuControl", uiControlType(), sizeof (uiHaikuControl));
-	return type_uiHaikuControl;
-}
-
 static void defaultCommitShow(uiControl *c)
 {
 	BView *view;
@@ -38,8 +29,10 @@ void osCommitDisable(uiControl *c)
 
 void uiHaikuFinishControl(uiControl *c)
 {
-	c->CommitShow = defaultCommitShow;
-	c->CommitHide = defaultCommitHide;
+	c->Show = defaultCommitShow;
+	c->Hide = defaultCommitHide;
+	c->Enable = osCommitEnable;
+	c->Disable = osCommitDisable;
 }
 
 // TODO make a signature for uiHaikuControl

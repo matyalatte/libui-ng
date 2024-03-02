@@ -34,15 +34,26 @@ static void defaultOnChanged(uiSlider *s, void *data)
 	// do nothing
 }
 
-intmax_t uiSliderValue(uiSlider *s)
+int uiSliderValue(uiSlider *s)
 {
 	return s->slider->Value();
 }
 
-void uiSliderSetValue(uiSlider *s, intmax_t value)
+void uiSliderSetValue(uiSlider *s, int value)
 {
 	// TODO does this trigger an event?
 	s->slider->SetValue(value);
+}
+
+int uiSliderHasToolTip(uiSlider *s)
+{
+	// TODO
+	return 0;
+}
+
+void uiSliderSetHasToolTip(uiSlider *s, int hasToolTip)
+{
+	// TODO
 }
 
 void uiSliderOnChanged(uiSlider *s, void (*f)(uiSlider *s, void *data), void *data)
@@ -51,7 +62,17 @@ void uiSliderOnChanged(uiSlider *s, void (*f)(uiSlider *s, void *data), void *da
 	s->onChangedData = data;
 }
 
-uiSlider *uiNewSlider(intmax_t min, intmax_t max)
+void uiSliderOnReleased(uiSlider *s, void (*f)(uiSlider *, void *), void *data)
+{
+	// TODO
+}
+
+void uiSliderSetRange(uiSlider *s, int min, int max)
+{
+	// TODO
+}
+
+uiSlider *uiNewSlider(int min, int max)
 {
 	uiSlider *s;
 	BMessage *msg;

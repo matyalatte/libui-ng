@@ -23,11 +23,6 @@ static void a2m(BAffineTransform *a, uiDrawMatrix *m)
 	m->M32 = a->ty;
 }
 
-void uiDrawMatrixSetIdentity(uiDrawMatrix *m)
-{
-	setIdentity(m);
-}
-
 void uiDrawMatrixTranslate(uiDrawMatrix *m, double x, double y)
 {
 	BAffineTransform a;

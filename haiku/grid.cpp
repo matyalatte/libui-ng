@@ -31,7 +31,7 @@ void uiGridSetPadded(uiGrid *g, int padded)
 	// TODO
 }
 
-uiGrid *uiNewGrid(const char *title)
+uiGrid *uiNewGrid(void)
 {
 	uiGrid *g;
 

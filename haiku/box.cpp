@@ -42,18 +42,6 @@ static void onDestroy(uiBox *b)
 	// TODO is the layout automatically deleted?
 }
 
-static void boxContainerUpdateState(uiControl *c)
-{
-	uiBox *b = uiBox(c);
-	struct boxchild bc;
-	uintmax_t i;
-
-	for (i = 0; i < b->controls->size(); i++) {
-		bc = b->controls->at(i);
-		controlUpdateState(bc.c);
-	}
-}
-
 #define isStretchy(bc) bc.stretchy
 
 void uiBoxAppend(uiBox *b, uiControl *c, int stretchy)
@@ -87,7 +75,7 @@ void uiBoxAppend(uiBox *b, uiControl *c, int stretchy)
 	b->controls->push_back(bc);
 }
 
-void uiBoxDelete(uiBox *b, uintmax_t index)
+void uiBoxDelete(uiBox *b, int index)
 {
 	struct boxchild bc;
 	BView *view;
@@ -134,7 +122,6 @@ static uiBox *finishNewBox(orientation o)
 	b->controls = new vector<struct boxchild>();
 
 	uiHaikuFinishNewControl(b, uiBox);
-	uiControl(b)->ContainerUpdateState = boxContainerUpdateState;
 
 	return b;
 }

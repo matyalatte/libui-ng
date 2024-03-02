@@ -18,7 +18,7 @@ struct singleChild *newSingleChild(uiControl *c, uiControl *parent, void (*attac
 	if (c == NULL)
 		return NULL;
 
-	s = uiNew(struct singleChild);
+	s = uiprivNew(struct singleChild);
 	s->c = c;
 	s->view = (BView *) uiControlHandle(s->c);
 	s->oldalign = s->view->ExplicitAlignment();
@@ -47,7 +47,7 @@ void singleChildRemove(struct singleChild *s)
 	delete s->box;
 	uiControlSetParent(s->c, NULL);
 	s->view->SetExplicitAlignment(s->oldalign);
-	uiFree(s);
+	uiprivFree(s);
 }
 
 void singleChildDestroy(struct singleChild *s)
@@ -68,7 +68,7 @@ BLayoutItem *singleChildLayoutItem(struct singleChild *s)
 
 void singleChildUpdateState(struct singleChild *s)
 {
-	controlUpdateState(s->c);
+	// TODO
 }
 
 void singleChildSetMargined(struct singleChild *s, float inset)

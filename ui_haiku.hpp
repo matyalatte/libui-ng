@@ -41,41 +41,21 @@ struct uiHaikuControl {
 	{ \
 		/* TODO */ return 0; \
 	}
-#define uiHaikuControlDefaultShow(type) \
-	static void type ## Show(uiControl *c) \
-	{ \
-		/* TODO */ \
-	}
-#define uiHaikuControlDefaultHide(type) \
-	static void type ## Hide(uiControl *c) \
-	{ \
-		/* TODO */ \
-	}
 #define uiHaikuControlDefaultEnabled(type) \
 	static int type ## Enabled(uiControl *c) \
 	{ \
 		/* TODO */ return 0; \
 	}
-#define uiHaikuControlDefaultEnable(type) \
-	static void type ## Enable(uiControl *c) \
-	{ \
-		/* TODO */ \
-	}
-#define uiHaikuControlDefaultDisable(type) \
-	static void type ## Disable(uiControl *c) \
-	{ \
-		/* TODO */ \
-	}
 
 // TODO document
 #define uiHaikuDefineControlWithOnDestroy(type, handlefield, onDestroy) \
-	static void _ ## type ## Destroy(uiControl *c) \
+	static void type ## Destroy(uiControl *c) \
 	{ \
 		type *hthis = type(c); \
 		onDestroy; \
 		delete hthis->handlefield; \
 	} \
-	static uintptr_t _ ## type ## Handle(uiControl *c) \
+	static uintptr_t type ## Handle(uiControl *c) \
 	{ \
 		return (uintptr_t) (type(c)->handlefield); \
 	} \
@@ -83,11 +63,7 @@ struct uiHaikuControl {
 	uiHaikuControlDefaultSetParent(type) \
 	uiHaikuControlDefaultToplevel(type) \
 	uiHaikuControlDefaultVisible(type) \
-	uiHaikuControlDefaultShow(type) \
-	uiHaikuControlDefaultHide(type) \
-	uiHaikuControlDefaultEnabled(type) \
-	uiHaikuControlDefaultEnable(type) \
-	uiHaikuControlDefaultDisable(type)
+	uiHaikuControlDefaultEnabled(type)
 
 #define uiHaikuDefineControl(type, handlefield) \
 	uiHaikuDefineControlWithOnDestroy(type, handlefield, (void) hthis;)
@@ -100,11 +76,7 @@ struct uiHaikuControl {
 	uiControl(var)->SetParent = type ## SetParent; \
 	uiControl(var)->Toplevel = type ## Toplevel; \
 	uiControl(var)->Visible = type ## Visible; \
-	uiControl(var)->Show = type ## Show; \
-	uiControl(var)->Hide = type ## Hide; \
-	uiControl(var)->Enabled = type ## Enabled; \
-	uiControl(var)->Enable = type ## Enable; \
-	uiControl(var)->Disable = type ## Disable; \
+	uiControl(var)->Enabled = type ## Enabled;
 _UI_EXTERN uiHaikuControl *uiHaikuAllocControl(size_t n, uint32_t typesig, const char *typenamestr);
 
 #define uiHaikuFinishNewControl(variable, type) \

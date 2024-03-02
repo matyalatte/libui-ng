@@ -42,7 +42,7 @@ static void attach(void *attachTo, BLayoutItem *what)
 	view->SetLayout((BLayout *) what);
 }
 
-void uiTabInsertAt(uiTab *t, const char *name, uintmax_t before, uiControl *c)
+void uiTabInsertAt(uiTab *t, const char *name, int before, uiControl *c)
 {
 	struct tabPage p;
 
@@ -59,24 +59,24 @@ void uiTabInsertAt(uiTab *t, const char *name, uintmax_t before, uiControl *c)
 	t->pages->push_back(p);
 }
 
-void uiTabDelete(uiTab *t, uintmax_t index)
+void uiTabDelete(uiTab *t, int index)
 {
 	// TODO
 }
 
-uintmax_t uiTabNumPages(uiTab *t)
-{
-	// TODO
-	return 0;
-}
-
-int uiTabMargined(uiTab *t, uintmax_t page)
+int uiTabNumPages(uiTab *t)
 {
 	// TODO
 	return 0;
 }
 
-void uiTabSetMargined(uiTab *t, uintmax_t page, int margined)
+int uiTabMargined(uiTab *t, int page)
+{
+	// TODO
+	return 0;
+}
+
+void uiTabSetMargined(uiTab *t, int page, int margined)
 {
 	// TODO
 }

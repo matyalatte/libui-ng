@@ -20,7 +20,6 @@ struct uiArea {
 
 uiHaikuDefineControl(
 	uiArea,								// type name
-	uiAreaType,							// type function
 	area									// handle
 )
 
@@ -59,6 +58,21 @@ void uiAreaQueueRedrawAll(uiArea *a)
 	a->area->Invalidate();
 }
 
+void uiAreaScrollTo(uiArea *a, double x, double y, double width, double height)
+{
+	// TODO
+}
+
+void uiAreaBeginUserWindowMove(uiArea *a)
+{
+	// TODO
+}
+
+void uiAreaBeginUserWindowResize(uiArea *a, uiWindowResizeEdge edge)
+{
+	// TODO
+}
+
 uiArea *uiNewArea(uiAreaHandler *ah)
 {
 	uiArea *a;
@@ -87,4 +101,11 @@ uiArea *uiNewArea(uiAreaHandler *ah)
 	uiHaikuFinishNewControl(a, uiArea);
 
 	return a;
+}
+
+
+uiArea *uiNewScrollingArea(uiAreaHandler *ah, int width, int height)
+{
+	// TODO
+	return uiNewArea(ah);
 }

@@ -38,6 +38,17 @@ void uiMain(void)
 	app->Run();
 }
 
+void uiMainSteps(void)
+{
+	// TODO
+}
+
+int uiMainStep(int wait)
+{
+	// TODO
+	return 0;
+}
+
 void uiQuit(void)
 {
 	// TODO app->PostMessage(B_QUIT_REQUESTED);?
@@ -46,6 +57,11 @@ void uiQuit(void)
 }
 
 void uiQueueMain(void (*f)(void *data), void *data)
+{
+	// TODO
+}
+
+void uiTimer(int milliseconds, int (*f)(void *data), void *data)
 {
 	// TODO
 }

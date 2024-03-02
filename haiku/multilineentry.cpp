@@ -63,3 +63,9 @@ uiMultilineEntry *uiNewMultilineEntry(void)
 
 	return e;
 }
+
+uiMultilineEntry *uiNewNonWrappingMultilineEntry(void)
+{
+	// TODO
+	return uiNewMultilineEntry();
+}

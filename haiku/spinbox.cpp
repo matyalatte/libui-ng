@@ -11,13 +11,13 @@ uiHaikuDefineControl(
 	dummy								// handle
 )
 
-intmax_t uiSpinboxValue(uiSpinbox *s)
+int uiSpinboxValue(uiSpinbox *s)
 {
 	// TODO
 	return 0;
 }
 
-void uiSpinboxSetValue(uiSpinbox *s, intmax_t value)
+void uiSpinboxSetValue(uiSpinbox *s, int value)
 {
 	// TODO
 }
@@ -27,7 +27,7 @@ void uiSpinboxOnChanged(uiSpinbox *s, void (*f)(uiSpinbox *s, void *data), void 
 	// TODO
 }
 
-uiSpinbox *uiNewSpinbox(intmax_t min, intmax_t max)
+uiSpinbox *uiNewSpinbox(int min, int max)
 {
 	uiSpinbox *s;
 

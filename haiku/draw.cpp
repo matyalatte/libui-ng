@@ -6,14 +6,14 @@ uiDrawContext *newContext(BView *view)
 {
 	uiDrawContext *c;
 
-	c = uiNew(uiDrawContext);
+	c = uiprivNew(uiDrawContext);
 	c->view = view;
 	return c;
 }
 
 void freeContext(uiDrawContext *c)
 {
-	uiFree(c);
+	uiprivFree(c);
 }
 
 // TODO verify this

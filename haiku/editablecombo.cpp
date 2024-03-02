@@ -37,8 +37,6 @@ uiEditableCombobox *uiNewEditableCombobox(void)
 
 	uiHaikuNewControl(uiEditableCombobox, c);
 
-	c = (uiEditableCombobox *) uiNewControl(uiEditableComboboxType());
-
 	c->dummy = new BStringView(NULL, "TODO uiEditableCombobox not implemented");
 
 	uiHaikuFinishNewControl(c, uiEditableCombobox);

@@ -27,3 +27,8 @@ void uiTableModelRowDeleted(uiTableModel *m, int oldIndex)
 {
 	// TODO
 }
+
+uiTableModelHandler *uiprivTableModelHandler(uiTableModel *m)
+{
+	return m->mh;
+}

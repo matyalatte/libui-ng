@@ -11,6 +11,12 @@ uiHaikuDefineControl(
 	pbar									// handle
 )
 
+int uiProgressBarValue(uiProgressBar *p)
+{
+	// TODO
+	return 0;
+}
+
 void uiProgressBarSetValue(uiProgressBar *p, int n)
 {
 	// not on api.haiku-os.org

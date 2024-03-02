@@ -37,7 +37,7 @@ void uiFormSetPadded(uiForm *f, int padded)
 	// TODO
 }
 
-uiForm *uiNewForm(const char *title)
+uiForm *uiNewForm(void)
 {
 	uiForm *f;
 

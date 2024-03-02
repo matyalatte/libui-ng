@@ -135,10 +135,73 @@ void uiWindowSetTitle(uiWindow *w, const char *title)
 	// don't queue resize; the caption isn't part of what affects layout and sizing of the client area (it'll be ellipsized if too long)
 }
 
+void uiWindowPosition(uiWindow *w, int *x, int *y)
+{
+	// TODO
+}
+
+void uiWindowSetPosition(uiWindow *w, int x, int y)
+{
+	// TODO
+}
+
+void uiWindowOnPositionChanged(uiWindow *w, void (*f)(uiWindow *, void *), void *data)
+{
+	// TODO
+}
+
+void uiWindowContentSize(uiWindow *w, int *width, int *height)
+{
+	// TODO
+}
+
+void uiWindowSetContentSize(uiWindow *w, int width, int height)
+{
+	// TODO
+}
+
+int uiWindowFullscreen(uiWindow *w)
+{
+	// TODO
+	return 0;
+}
+
+void uiWindowSetFullscreen(uiWindow *w, int fullscreen)
+{
+	// TODO
+}
+
+void uiWindowOnContentSizeChanged(uiWindow *w, void (*f)(uiWindow *, void *), void *data)
+{
+	// TODO
+}
+
 void uiWindowOnClosing(uiWindow *w, int (*f)(uiWindow *, void *), void *data)
 {
 	w->onClosing = f;
 	w->onClosingData = data;
+}
+
+int uiWindowFocused(uiWindow *w)
+{
+	// TODO
+	return 0;
+}
+
+void uiWindowOnFocusChanged(uiWindow *w, void (*f)(uiWindow *, void *), void *data)
+{
+	// TODO
+}
+
+int uiWindowBorderless(uiWindow *w)
+{
+	// TODO
+	return 0;
+}
+
+void uiWindowSetBorderless(uiWindow *w, int borderless)
+{
+	// TODO
 }
 
 // see singlechild.cpp
@@ -175,11 +238,22 @@ void uiWindowSetMargined(uiWindow *w, int margined)
 			singleChildSetMargined(w->child, 0);
 }
 
+int uiWindowResizeable(uiWindow *w)
+{
+	// TODO
+	return 0;
+}
+
+void uiWindowSetResizeable(uiWindow *w, int resizeable)
+{
+	// TODO
+}
+
 uiWindow *uiNewWindow(const char *title, int width, int height, int hasMenubar)
 {
 	uiWindow *w;
 
-	uiHaikuNewControl(uiWindo, w);
+	uiHaikuNewControl(uiWindow, w);
 
 	// TODO find out how to make it ignore position
 	// The given rect is the size of the inside of the window, just as we want.
@@ -200,10 +274,8 @@ uiWindow *uiNewWindow(const char *title, int width, int height, int hasMenubar)
 	uiWindowOnClosing(w, defaultOnClosing, NULL);
 
 	uiHaikuFinishNewControl(w, uiWindow);
-	uiControl(w)->CommitDestroy = windowCommitDestroy;
-	uiControl(w)->CommitShow = windowCommitShow;
-	uiControl(w)->CommitHide = windowCommitHide;
-	uiControl(w)->ContainerUpdateState = windowContainerUpdateState;
-
+	uiControl(w)->Destroy = windowCommitDestroy;
+	uiControl(w)->Show = windowCommitShow;
+	uiControl(w)->Hide = windowCommitHide;
 	return w;
 }
