@@ -1,0 +1,3 @@
+struct uiDrawContext {
+	BView *view;
+};

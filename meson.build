@@ -153,6 +153,9 @@ if libui_OS == 'windows'
 elif libui_OS == 'darwin'
 	subdir('darwin')
 	install_headers('ui_darwin.h')
+elif libui_OS == 'haiku'
+	subdir('haiku')
+	install_headers('ui_haiku.hpp')
 else
 	subdir('unix')
 	install_headers('ui_unix.h')
