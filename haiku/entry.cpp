@@ -9,8 +9,7 @@ struct uiEntry {
 };
 
 uiHaikuDefineControl(
-	uiEntry,								// type name
-	uiEntryType,							// type function
+	uiEntry,							// type name
 	tc									// handle
 )
 
@@ -53,7 +52,7 @@ uiEntry *uiNewEntry(void)
 {
 	uiEntry *e;
 
-	e = (uiEntry *) uiNewControl(uiEntryType());
+	uiHaikuNewControl(uiEntry, e);
 
 	e->tc = new BTextControl(NULL, "", new BMessage(mEntryChanged));
 

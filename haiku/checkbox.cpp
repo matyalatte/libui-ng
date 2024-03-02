@@ -13,8 +13,7 @@ struct uiCheckbox {
 
 uiHaikuDefineControl(
 	uiCheckbox,							// type name
-	uiCheckboxType,						// type function
-	checkbox								// handle
+	checkbox							// handle
 )
 
 #define mCheckboxToggled 0x4E714E71
@@ -62,7 +61,7 @@ uiCheckbox *uiNewCheckbox(const char *text)
 {
 	uiCheckbox *c;
 
-	c = (uiCheckbox *) uiNewControl(uiCheckboxType());
+	uiHaikuNewControl(uiCheckbox, c);
 
 	c->checkbox = new BCheckBox(text, new BMessage(mCheckboxToggled));
 

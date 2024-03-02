@@ -1,4 +1,3 @@
-// 18 november 2015
 #include "uipriv_haiku.hpp"
 
 struct uiForm {
@@ -8,7 +7,6 @@ struct uiForm {
 
 uiHaikuDefineControl(
 	uiForm,								// type name
-	uiFormType,							// type function
 	dummy								// handle
 )
 
@@ -43,7 +41,7 @@ uiForm *uiNewForm(const char *title)
 {
 	uiForm *f;
 
-	f = (uiForm *) uiNewControl(uiFormType());
+	uiHaikuNewControl(uiForm, f);
 
 	f->dummy = new BStringView(NULL, "TODO uiForm not implemented");
 

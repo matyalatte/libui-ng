@@ -19,9 +19,8 @@ static void onDestroy(uiTab *);
 
 uiHaikuDefineControlWithOnDestroy(
 	uiTab,								// type name
-	uiTabType,							// type function
-	tabview,								// handle
-	onDestroy(hthis);						// on destroy
+	tabview,							// handle
+	onDestroy(hthis);					// on destroy
 )
 
 static void onDestroy(uiTab *t)
@@ -86,7 +85,7 @@ uiTab *uiNewTab(void)
 {
 	uiTab *t;
 
-	t = (uiTab *) uiNewControl(uiTabType());
+	uiHaikuNewControl(uiTab, t);
 
 	t->tabview = new BTabView(NULL, B_WIDTH_FROM_LABEL);
 	// TODO scrollable

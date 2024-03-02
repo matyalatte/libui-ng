@@ -33,8 +33,8 @@ void areaView::Draw(BRect updateRect)
 	dp.Context = newContext(this);
 
 	bounds = this->Bounds();
-	dp.ClientWidth = bounds.right - bounds.left;
-	dp.ClientHeight = bounds.bottom - bounds.top;
+	dp.AreaWidth = bounds.right - bounds.left;
+	dp.AreaHeight = bounds.bottom - bounds.top;
 
 	dp.ClipX = updateRect.left;
 	dp.ClipY = updateRect.top;
@@ -63,7 +63,7 @@ uiArea *uiNewArea(uiAreaHandler *ah)
 {
 	uiArea *a;
 
-	a = (uiArea *) uiNewControl(uiAreaType());
+	uiHaikuNewControl(uiArea, a);
 
 	a->ah = ah;
 

@@ -8,7 +8,6 @@ struct uiGroup {
 
 uiHaikuDefineControl(
 	uiGroup,								// type name
-	uiGroupType,							// type function
 	dummy								// handle
 )
 
@@ -43,7 +42,7 @@ uiGroup *uiNewGroup(const char *title)
 {
 	uiGroup *g;
 
-	g = (uiGroup *) uiNewControl(uiGroupType());
+	uiHaikuNewControl(uiGroup, g);
 
 	g->dummy = new BStringView(NULL, "TODO uiGroup not implemented");
 

@@ -8,7 +8,6 @@ struct uiProgressBar {
 
 uiHaikuDefineControl(
 	uiProgressBar,							// type name
-	uiProgressBarType,						// type function
 	pbar									// handle
 )
 
@@ -22,7 +21,7 @@ uiProgressBar *uiNewProgressBar(void)
 {
 	uiProgressBar *p;
 
-	p = (uiProgressBar *) uiNewControl(uiProgressBarType());
+	uiHaikuNewControl(uiProgressBar, p);
 
 	// layout constructor; not on api.haiku-os.org
 	p->pbar = new BStatusBar(NULL, NULL, NULL);

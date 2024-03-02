@@ -6,8 +6,7 @@ struct uiEditableCombobox {
 };
 
 uiHaikuDefineControl(
-	uiEditableCombobox,						// type name
-	uiEditableComboboxType,					// type function
+	uiEditableCombobox,					// type name
 	dummy								// handle
 )
 
@@ -35,6 +34,8 @@ void uiEditableComboboxOnChanged(uiEditableCombobox *c, void (*f)(uiEditableComb
 uiEditableCombobox *uiNewEditableCombobox(void)
 {
 	uiEditableCombobox *c;
+
+	uiHaikuNewControl(uiEditableCombobox, c);
 
 	c = (uiEditableCombobox *) uiNewControl(uiEditableComboboxType());
 

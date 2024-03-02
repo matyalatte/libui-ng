@@ -13,7 +13,6 @@ struct uiSlider {
 
 uiHaikuDefineControl(
 	uiSlider,								// type name
-	uiSliderType,							// type function
 	slider								// handle
 )
 
@@ -57,7 +56,7 @@ uiSlider *uiNewSlider(intmax_t min, intmax_t max)
 	uiSlider *s;
 	BMessage *msg;
 
-	s = (uiSlider *) uiNewControl(uiSliderType());
+	uiHaikuNewControl(uiSlider, s);
 
 	uiHaikuRegisterEventHandler(mSliderChanged, onChanged);
 	msg = new BMessage(mSliderChanged);

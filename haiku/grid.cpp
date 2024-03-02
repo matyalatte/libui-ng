@@ -7,7 +7,6 @@ struct uiGrid {
 
 uiHaikuDefineControl(
 	uiGrid,								// type name
-	uiGridType,							// type function
 	dummy								// handle
 )
 
@@ -36,7 +35,7 @@ uiGrid *uiNewGrid(const char *title)
 {
 	uiGrid *g;
 
-	g = (uiGrid *) uiNewControl(uiGridType());
+	uiHaikuNewControl(uiGrid, g);
 
 	g->dummy = new BStringView(NULL, "TODO uiGrid not implemented");
 

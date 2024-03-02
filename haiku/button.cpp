@@ -10,7 +10,6 @@ struct uiButton {
 
 uiHaikuDefineControl(
 	uiButton,								// type name
-	uiButtonType,							// type function
 	button								// handle
 )
 
@@ -53,7 +52,7 @@ uiButton *uiNewButton(const char *text)
 	uiButton *b;
 	BMessage *msg;
 
-	b = (uiButton *) uiNewControl(uiButtonType());
+	uiHaikuNewControl(uiButton, b);
 
 	uiHaikuRegisterEventHandler(mButtonClicked, onClicked);
 	msg = new BMessage(mButtonClicked);

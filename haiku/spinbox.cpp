@@ -8,7 +8,6 @@ struct uiSpinbox {
 
 uiHaikuDefineControl(
 	uiSpinbox,							// type name
-	uiSpinboxType,						// type function
 	dummy								// handle
 )
 
@@ -32,7 +31,7 @@ uiSpinbox *uiNewSpinbox(intmax_t min, intmax_t max)
 {
 	uiSpinbox *s;
 
-	s = (uiSpinbox *) uiNewControl(uiSpinboxType());
+	uiHaikuNewControl(uiSpinbox, s);
 
 	s->dummy = new BStringView(NULL, "TODO uiSpinbox not implemented");
 

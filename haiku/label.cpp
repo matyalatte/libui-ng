@@ -10,7 +10,6 @@ struct uiLabel {
 
 uiHaikuDefineControl(
 	uiLabel,								// type name
-	uiLabelType,							// type function
 	label									// handle
 )
 
@@ -28,7 +27,7 @@ uiLabel *uiNewLabel(const char *text)
 {
 	uiLabel *l;
 
-	l = (uiLabel *) uiNewControl(uiLabelType());
+	uiHaikuNewControl(uiLabel, l);
 
 	l->label = new BStringView(NULL, text);
 

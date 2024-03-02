@@ -24,9 +24,8 @@ static void onDestroy(uiBox *b);
 
 uiHaikuDefineControlWithOnDestroy(
 	uiBox,								// type name
-	uiBoxType,							// type function
 	view,								// handle
-	onDestroy(hthis);						// on destroy
+	onDestroy(hthis);					// on destroy
 )
 
 static void onDestroy(uiBox *b)
@@ -123,7 +122,7 @@ static uiBox *finishNewBox(orientation o)
 {
 	uiBox *b;
 
-	b = (uiBox *) uiNewControl(uiBoxType());
+	uiHaikuNewControl(uiBox, b);
 
 	b->layout = new BGroupLayout(o, 0);
 	b->view = new BView(NULL, B_SUPPORTS_LAYOUT, b->layout);

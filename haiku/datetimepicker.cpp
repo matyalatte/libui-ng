@@ -8,7 +8,6 @@ struct uiDateTimePicker {
 
 uiHaikuDefineControl(
 	uiDateTimePicker,						// type name
-	uiDateTimePickerType,					// type function
 	dummy								// handle
 )
 
@@ -16,7 +15,7 @@ static uiDateTimePicker *finishNewDateTimePicker(void)
 {
 	uiDateTimePicker *d;
 
-	d = (uiDateTimePicker *) uiNewControl(uiDateTimePickerType());
+	uiHaikuNewControl(uiDateTimePicker, d);
 
 	d->dummy = new BStringView(NULL, "TODO uiDateTimePicker not implemented");
 

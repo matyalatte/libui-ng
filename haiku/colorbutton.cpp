@@ -8,7 +8,6 @@ struct uiColorButton {
 
 uiHaikuDefineControl(
 	uiColorButton,						// type name
-	uiColorButtonType,					// type function
 	dummy								// handle
 )
 
@@ -31,7 +30,7 @@ uiColorButton *uiNewColorButton(void)
 {
 	uiColorButton *b;
 
-	b = (uiColorButton *) uiNewControl(uiColorButtonType());
+	uiHaikuNewControl(uiColorButton, b);
 
 	b->dummy = new BStringView(NULL, "TODO uiColorButton not implemented");
 

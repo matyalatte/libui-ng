@@ -8,7 +8,6 @@ struct uiRadioButtons {
 
 uiHaikuDefineControl(
 	uiRadioButtons,						// type name
-	uiRadioButtonsType,						// type function
 	dummy								// handle
 )
 
@@ -21,7 +20,7 @@ uiRadioButtons *uiNewRadioButtons(void)
 {
 	uiRadioButtons *r;
 
-	r = (uiRadioButtons *) uiNewControl(uiRadioButtonsType());
+	uiHaikuNewControl(uiRadioButtons, r);
 
 	r->dummy = new BStringView(NULL, "TODO uiRadioButtons not implemented");
 

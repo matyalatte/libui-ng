@@ -8,8 +8,7 @@ struct uiTable {
 };
 
 uiHaikuDefineControl(
-	uiTable,								// type name
-	uiTableType,							// type function
+	uiTable,							// type name
 	dummy								// handle
 )
 
@@ -105,7 +104,7 @@ uiTable *uiNewTable(const char *title)
 {
 	uiTable *t;
 
-	t = (uiTable *) uiNewControl(uiTableType());
+	uiHaikuNewControl(uiTable, t);
 
 	t->dummy = new BStringView(NULL, "TODO uiTable not implemented");
 

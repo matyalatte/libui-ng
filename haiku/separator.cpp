@@ -7,8 +7,7 @@ struct uiSeparator {
 };
 
 uiHaikuDefineControl(
-	uiSeparator,							// type name
-	uiSeparatorType,						// type function
+	uiSeparator,						// type name
 	dummy								// handle
 )
 
@@ -16,7 +15,7 @@ uiSeparator *uiNewHorizontalSeparator(void)
 {
 	uiSeparator *s;
 
-	s = (uiSeparator *) uiNewControl(uiSeparatorType());
+	uiHaikuNewControl(uiSeparator, s);
 
 	s->dummy = new BStringView(NULL, "TODO uiSeparator not implemented");
 

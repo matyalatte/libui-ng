@@ -29,7 +29,7 @@ void uninitAlloc(void)
 	fprintf(stderr, "[libui] leaked allocations:\n");
 	for (i = allocations.begin(); i != allocations.end(); i++)
 		fprintf(stderr, "[libui] %p %s\n", *i, *TYPE(*i));
-	complain("either you left something around or there's a bug in libui");
+	uiprivImplBug("either you left something around or there's a bug in libui");
 }
 
 void *uiAlloc(size_t size, const char *type)
@@ -74,7 +74,7 @@ void *uiRealloc(void *p, size_t xnew, const char *type)
 void uiFree(void *p)
 {
 	if (p == NULL)
-		complain("attempt to uiFree(NULL); there's a bug somewhere");
+		uiprivImplBug("attempt to uiFree(NULL); there's a bug somewhere");
 	p = BASE(p);
 	free(p);
 	// TODO check this

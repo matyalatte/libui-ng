@@ -34,9 +34,8 @@ struct uiWindow {
 
 uiHaikuDefineControlWithOnDestroy(
 	uiWindow,							// type name
-	uiWindowType,							// type function
 	window,								// handle
-	complain("attempt to use default CommitDestroy() code for uiWindow on Haiku");			// on destroy
+	uiprivImplBug("attempt to use default CommitDestroy() code for uiWindow on Haiku");			// on destroy
 )
 
 static map<uint32, void (*)(BMessage *)> eventHandlers;
@@ -53,7 +52,7 @@ void uiHaikuRegisterEventHandler(uint32 what, void (*handler)(BMessage *))
 		return;
 	}
 	if (iter->second != handler)			// mismatch
-		complain("attempt to clobber BMessage::what 0x%08X in uiHaikuRegisterEventHandler()", what);
+		uiprivImplBug("attempt to clobber BMessage::what 0x%08X in uiHaikuRegisterEventHandler()", what);
 }
 
 void libuiBWindow::MessageReceived(BMessage *msg)
@@ -180,7 +179,7 @@ uiWindow *uiNewWindow(const char *title, int width, int height, int hasMenubar)
 {
 	uiWindow *w;
 
-	w = (uiWindow *) uiNewControl(uiWindowType());
+	uiHaikuNewControl(uiWindo, w);
 
 	// TODO find out how to make it ignore position
 	// The given rect is the size of the inside of the window, just as we want.

@@ -10,7 +10,6 @@ struct uiMultilineEntry {
 
 uiHaikuDefineControl(
 	uiMultilineEntry,						// type name
-	uiMultilineEntryType,					// type function
 	dummy								// handle
 )
 
@@ -56,7 +55,7 @@ uiMultilineEntry *uiNewMultilineEntry(void)
 {
 	uiMultilineEntry *e;
 
-	e = (uiMultilineEntry *) uiNewControl(uiMultilineEntryType());
+	uiHaikuNewControl(uiMultilineEntry, e);
 
 	e->dummy = new BStringView(NULL, "TODO uiMultilineEntry not implemented");
 

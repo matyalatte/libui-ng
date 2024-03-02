@@ -8,7 +8,6 @@ struct uiFontButton {
 
 uiHaikuDefineControl(
 	uiFontButton,						// type name
-	uiFontButtonType,					// type function
 	dummy								// handle
 )
 
@@ -26,7 +25,7 @@ uiFontButton *uiNewFontButton(void)
 {
 	uiFontButton *b;
 
-	b = (uiFontButton *) uiNewControl(uiFontButtonType());
+	uiHaikuNewControl(uiFontButton, b);
 
 	b->dummy = new BStringView(NULL, "TODO uiFontButton not implemented");
 

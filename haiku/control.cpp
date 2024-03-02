@@ -41,3 +41,11 @@ void uiHaikuFinishControl(uiControl *c)
 	c->CommitShow = defaultCommitShow;
 	c->CommitHide = defaultCommitHide;
 }
+
+// TODO make a signature for uiHaikuControl
+#define uiUnixControlSignature 0x556E6978
+
+uiHaikuControl *uiHaikuAllocControl(size_t n, uint32_t typesig, const char *typenamestr)
+{
+	return uiHaikuControl(uiAllocControl(n, uiUnixControlSignature, typesig, typenamestr));
+}

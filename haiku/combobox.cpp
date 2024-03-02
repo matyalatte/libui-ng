@@ -8,7 +8,6 @@ struct uiCombobox {
 
 uiHaikuDefineControl(
 	uiCombobox,							// type name
-	uiComboboxType,						// type function
 	dummy								// handle
 )
 
@@ -38,7 +37,7 @@ static uiCombobox *finishNewCombobox(void)
 {
 	uiCombobox *c;
 
-	c = (uiCombobox *) uiNewControl(uiComboboxType());
+	uiHaikuNewControl(uiCombobox, c);
 
 	c->dummy = new BStringView(NULL, "TODO uiCombobox not implemented");
 

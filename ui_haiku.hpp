@@ -16,12 +16,60 @@ extern "C" {
 typedef struct uiHaikuControl uiHaikuControl;
 struct uiHaikuControl {
 	uiControl c;
+	uiControl *parent;
 };
 #define uiHaikuControl(this) ((uiHaikuControl *) (this))
 
+#define uiHaikuControlDefaultParent(type) \
+	static uiControl *type ## Parent(uiControl *c) \
+	{ \
+		return uiHaikuControl(c)->parent; \
+	}
+#define uiHaikuControlDefaultSetParent(type) \
+	static void type ## SetParent(uiControl *c, uiControl *parent) \
+	{ \
+		uiControlVerifySetParent(c, parent); \
+		uiHaikuControl(c)->parent = parent; \
+	}
+#define uiHaikuControlDefaultToplevel(type) \
+	static int type ## Toplevel(uiControl *c) \
+	{ \
+		/* TODO */ return 0; \
+	}
+#define uiHaikuControlDefaultVisible(type) \
+	static int type ## Visible(uiControl *c) \
+	{ \
+		/* TODO */ return 0; \
+	}
+#define uiHaikuControlDefaultShow(type) \
+	static void type ## Show(uiControl *c) \
+	{ \
+		/* TODO */ \
+	}
+#define uiHaikuControlDefaultHide(type) \
+	static void type ## Hide(uiControl *c) \
+	{ \
+		/* TODO */ \
+	}
+#define uiHaikuControlDefaultEnabled(type) \
+	static int type ## Enabled(uiControl *c) \
+	{ \
+		/* TODO */ return 0; \
+	}
+#define uiHaikuControlDefaultEnable(type) \
+	static void type ## Enable(uiControl *c) \
+	{ \
+		/* TODO */ \
+	}
+#define uiHaikuControlDefaultDisable(type) \
+	static void type ## Disable(uiControl *c) \
+	{ \
+		/* TODO */ \
+	}
+
 // TODO document
 #define uiHaikuDefineControlWithOnDestroy(type, handlefield, onDestroy) \
-	static void _ ## type ## CommitDestroy(uiControl *c) \
+	static void _ ## type ## Destroy(uiControl *c) \
 	{ \
 		type *hthis = type(c); \
 		onDestroy; \
@@ -31,18 +79,35 @@ struct uiHaikuControl {
 	{ \
 		return (uintptr_t) (type(c)->handlefield); \
 	} \
-	static void _ ## type ## ContainerUpdateState(uiControl *c) \
-	{ \
-		/* do nothing */ \
-	}
+	uiHaikuControlDefaultParent(type) \
+	uiHaikuControlDefaultSetParent(type) \
+	uiHaikuControlDefaultToplevel(type) \
+	uiHaikuControlDefaultVisible(type) \
+	uiHaikuControlDefaultShow(type) \
+	uiHaikuControlDefaultHide(type) \
+	uiHaikuControlDefaultEnabled(type) \
+	uiHaikuControlDefaultEnable(type) \
+	uiHaikuControlDefaultDisable(type)
 
 #define uiHaikuDefineControl(type, handlefield) \
 	uiHaikuDefineControlWithOnDestroy(type, handlefield, (void) hthis;)
 
+#define uiHaikuNewControl(type, var) \
+	var = type(uiHaikuAllocControl(sizeof (type), type ## Signature, #type)); \
+	uiControl(var)->Destroy = type ## Destroy; \
+	uiControl(var)->Handle = type ## Handle; \
+	uiControl(var)->Parent = type ## Parent; \
+	uiControl(var)->SetParent = type ## SetParent; \
+	uiControl(var)->Toplevel = type ## Toplevel; \
+	uiControl(var)->Visible = type ## Visible; \
+	uiControl(var)->Show = type ## Show; \
+	uiControl(var)->Hide = type ## Hide; \
+	uiControl(var)->Enabled = type ## Enabled; \
+	uiControl(var)->Enable = type ## Enable; \
+	uiControl(var)->Disable = type ## Disable; \
+_UI_EXTERN uiHaikuControl *uiHaikuAllocControl(size_t n, uint32_t typesig, const char *typenamestr);
+
 #define uiHaikuFinishNewControl(variable, type) \
-	uiControl(variable)->CommitDestroy = _ ## type ## CommitDestroy; \
-	uiControl(variable)->Handle = _ ## type ## Handle; \
-	uiControl(variable)->ContainerUpdateState = _ ## type ## ContainerUpdateState; \
 	uiHaikuFinishControl(uiControl(variable));
 
 // This is a function used to set up a control.
