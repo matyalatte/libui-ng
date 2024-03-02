@@ -56,7 +56,7 @@ uiMultilineEntry *uiNewMultilineEntry(void)
 {
 	uiMultilineEntry *e;
 
-	e = (uiMultilineEntry *) uiNewControl(uiMultilineEntry());
+	e = (uiMultilineEntry *) uiNewControl(uiMultilineEntryType());
 
 	e->dummy = new BStringView(NULL, "TODO uiMultilineEntry not implemented");
 
