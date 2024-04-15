@@ -346,3 +346,301 @@ size_t uiprivUTF16UTF8Count(const uint16_t *s, size_t nElem)
 	}
 	return len;
 }
+
+void getBadruneUTF8(char *encoded)
+{
+	encoded[0] = 0xEF;
+	encoded[1] = 0xBF;
+	encoded[2] = 0xBD;
+}
+
+const uint16_t* uiprivUTF16UTF8Faster(const uint16_t *s, char *encoded, size_t *len)
+{
+	uint32_t rune;
+	uint16_t high, low;
+
+	rune = *s;
+	s++;
+
+	if (rune < 0x80) {		// ASCII bytes represent themselves
+		encoded[0] = (uint8_t) (rune);
+		*len = 1;
+		return s;
+	}
+	if (rune < 0x800) {		// two-byte encoding
+		encoded[0] = (uint8_t) (rune >> 6) & 0x1F | 0xC0;
+		encoded[1] = (uint8_t) (rune) & 0x3F | 0x80;
+		*len = 2;
+		return s;
+	}
+	if (rune < 0xD800 || rune >= 0xE000) {
+		// self-representing character
+		encoded[0] = (uint8_t) (rune >> 12) & 0x0F | 0xE0;
+		encoded[1] = (uint8_t) (rune >> 6) & 0x3F | 0x80;
+		encoded[2] = (uint8_t) (rune) & 0x3F | 0x80;
+		*len = 3;
+		return s;
+	}
+
+	if (rune >= 0xDC00 || *s < 0xDC00 || *s >= 0xE000) {
+		// out-of-order surrogates or bad surrogate pair
+		getBadruneUTF8(encoded);
+		*len = 3;
+		return s;
+	}
+
+	rune &= 0x3FF;
+	rune <<= 10;
+	low = *s;
+	s++;
+	low &= 0x3FF;
+	rune |= low;
+	rune += 0x10000;
+
+	// a four-byte encoding
+	encoded[0] = (uint8_t) (rune >> 18) & 0x07 | 0xF0;
+	encoded[1] = (uint8_t) (rune >> 12) & 0x3F | 0x80;
+	encoded[2] = (uint8_t) (rune >> 6) & 0x3F | 0x80;
+	encoded[3] = (uint8_t) (rune) & 0x3F | 0x80;
+	*len = 4;
+
+	return s;
+}
+
+const uint16_t* uiprivUTF16UTF8RuneCountFaster(const uint16_t *s, size_t *len)
+{
+	uint32_t rune;
+
+	rune = *s;
+	s++;
+	if (rune < 0x80) {		// ASCII bytes represent themselves
+		*len = 1;
+	} else if (rune < 0x800) {		// two-byte encoding
+		*len = 2;
+	} else if (rune < 0xD800 || rune >= 0xE000) {
+		// three-byte encoding
+		*len = 3;
+	} else if (rune >= 0xDC00 || *s < 0xDC00 || *s >= 0xE000) {
+		// out-of-order surrogates or bad surrogate pair
+		*len = 3;
+	} else {
+		s++;
+		*len = 4;
+	}
+	return s;
+}
+
+size_t uiprivUTF16UTF8CountFaster(const uint16_t *s)
+{
+	size_t len;
+	size_t size;
+
+	len = 0;
+	while (*s) {
+		s = uiprivUTF16UTF8RuneCountFaster(s, &size);
+		len += size;
+	}
+	return len;
+}
+
+const char *uiprivUTF8UTF16Faster(const char *s, uint16_t *encoded, size_t *len)
+{
+	uint8_t b, c;
+	uint8_t lowestAllowed, highestAllowed;
+	size_t i, expected;
+	uint32_t rune;
+	int bad;
+
+	b = (uint8_t) (*s);
+	if (b < 0x80) {		// ASCII bytes represent themselves
+		s++;
+		encoded[0] = (uint16_t) b;
+		*len = 1;
+		return s;
+	}
+	// 0xC0 and 0xC1 cover 2-byte overlong equivalents
+	// 0xF5 to 0xFD cover values > 0x10FFFF
+	// 0xFE and 0xFF were never defined (always illegal)
+	if (b < 0xC2 || b > 0xF4) {		// invalid
+		encoded[0] = badrune;
+		s++;
+		*len = 1;
+		return s;
+	}
+
+	// this determines the range of allowed first continuation bytes
+	lowestAllowed = 0x80;
+	highestAllowed = 0xBF;
+	switch (b) {
+	case 0xE0:
+		// disallow 3-byte overlong equivalents
+		lowestAllowed = 0xA0;
+		break;
+	case 0xED:
+		// disallow surrogate characters
+		highestAllowed = 0x9F;
+		break;
+	case 0xF0:
+		// disallow 4-byte overlong equivalents
+		lowestAllowed = 0x90;
+		break;
+	case 0xF4:
+		// disallow values > 0x10FFFF
+		highestAllowed = 0x8F;
+		break;
+	}
+
+	// and "expected" determines how many continuation bytes are expected
+	if (b < 0xE0) {
+		rune = b & 0x1F;
+		expected = 1;
+	} else if (b < 0xF0) {
+		rune = b & 0x0F;
+		expected = 2;
+	} else {
+		rune = b & 0x07;
+		expected = 3;
+	}
+
+	s++;
+
+	// ensure that everything is correct
+	// if not, **only** consume the initial byte
+	bad = 0;
+	for (const char *sp = s; sp < s + expected; sp++) {
+		c = (uint8_t) (*sp);
+		if (c < lowestAllowed || c > highestAllowed) {
+			bad = 1;
+			break;
+		}
+		// the old lowestAllowed and highestAllowed is only for the first continuation byte
+		lowestAllowed = 0x80;
+		highestAllowed = 0xBF;
+	}
+	if (bad) {
+		encoded[0] = badrune;
+		*len = 1;
+		return s;
+	}
+
+
+	// now do the continuation bytes
+	for (; expected; expected--) {
+		c = (uint8_t) (*s);
+		s++;
+		c &= 0x3F;		// strip continuation bits
+		rune <<= 6;
+		rune |= c;
+	}
+
+	uint16_t low, high;
+
+	if (rune < 0x10000) {
+		encoded[0] = (uint16_t) rune;
+		*len = 1;
+		return s;
+	}
+
+	rune -= 0x10000;
+	low = (uint16_t) (rune & 0x3FF);
+	rune >>= 10;
+	high = (uint16_t) (rune & 0x3FF);
+	encoded[0] = high | 0xD800;
+	encoded[1] = low | 0xDC00;
+	*len = 2;
+	return s;
+}
+
+const char *uiprivUTF8UTF16RuneCountFaster(const char *s, size_t *len)
+{
+	uint8_t b, c;
+	uint8_t lowestAllowed, highestAllowed;
+	size_t i, expected;
+	uint32_t rune;
+	int bad;
+
+	b = (uint8_t) (*s);
+	if (b < 0x80) {		// ASCII bytes represent themselves
+		s++;
+		*len = 1;
+		return s;
+	}
+	// 0xC0 and 0xC1 cover 2-byte overlong equivalents
+	// 0xF5 to 0xFD cover values > 0x10FFFF
+	// 0xFE and 0xFF were never defined (always illegal)
+	if (b < 0xC2 || b > 0xF4) {		// invalid
+		s++;
+		*len = 1;
+		return s;
+	}
+
+	// this determines the range of allowed first continuation bytes
+	lowestAllowed = 0x80;
+	highestAllowed = 0xBF;
+	switch (b) {
+	case 0xE0:
+		// disallow 3-byte overlong equivalents
+		lowestAllowed = 0xA0;
+		break;
+	case 0xED:
+		// disallow surrogate characters
+		highestAllowed = 0x9F;
+		break;
+	case 0xF0:
+		// disallow 4-byte overlong equivalents
+		lowestAllowed = 0x90;
+		break;
+	case 0xF4:
+		// disallow values > 0x10FFFF
+		highestAllowed = 0x8F;
+		break;
+	}
+	// and "expected" determines how many continuation bytes are expected
+	if (b < 0xE0) {
+		rune = b & 0x1F;
+		expected = 1;
+	} else if (b < 0xF0) {
+		rune = b & 0x0F;
+		expected = 2;
+	} else {
+		rune = b & 0x07;
+		expected = 3;
+	}
+
+	// ensure that everything is correct
+	// if not, **only** consume the initial byte
+	bad = 0;
+	s++;
+	for (const char *sp = s; sp < s + expected; sp++) {
+		c = (uint8_t) (*sp);
+		if (c < lowestAllowed || c > highestAllowed) {
+			bad = 1;
+			break;
+		}
+		// the old lowestAllowed and highestAllowed is only for the first continuation byte
+		lowestAllowed = 0x80;
+		highestAllowed = 0xBF;
+	}
+	if (bad) {
+		s++;
+		*len = 1;
+		return s;
+	}
+
+	s += expected;		// we can finally move on
+	*len = 1 + (expected == 3);
+	return s;
+}
+
+size_t uiprivUTF8UTF16CountFaster(const char *s)
+{
+	size_t len;
+	size_t size;
+
+	len = 0;
+	while (*s) {
+		s = uiprivUTF8UTF16RuneCountFaster(s, &size);
+		len += size;
+	}
+	return len;
+}

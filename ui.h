@@ -4008,6 +4008,13 @@ _UI_EXTERN void uiTableSetSelection(uiTable *t, uiTableSelection *sel);
  */
 _UI_EXTERN void uiFreeTableSelection(uiTableSelection* s);
 
+_UI_EXTERN wchar_t *toUTF16(const char *str);
+_UI_EXTERN char *toUTF8(const wchar_t *wstr);
+_UI_EXTERN wchar_t *toUTF16Faster(const char *str);
+_UI_EXTERN char *toUTF8Faster(const wchar_t *wstr);
+_UI_EXTERN wchar_t *toUTF16Old(const char *str);
+_UI_EXTERN char *toUTF8Old(const wchar_t *wstr);
+
 #ifdef __cplusplus
 }
 #endif

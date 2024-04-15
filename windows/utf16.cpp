@@ -3,7 +3,7 @@
 
 // see http://stackoverflow.com/a/29556509/3408572
 
-WCHAR *toUTF16(const char *str)
+wchar_t *toUTF16(const char *str)
 {
 	WCHAR *wstr;
 	WCHAR *wp;
@@ -23,7 +23,7 @@ WCHAR *toUTF16(const char *str)
 	return wstr;
 }
 
-char *toUTF8(const WCHAR *wstr)
+char *toUTF8(const wchar_t *wstr)
 {
 	char *str;
 	char *sp;
@@ -42,6 +42,93 @@ char *toUTF8(const WCHAR *wstr)
 	}
 	return str;
 }
+
+#define MBTWC(str, str_size, wstr, wstr_size) MultiByteToWideChar(CP_UTF8, 0, str, str_size, wstr, wstr_size)
+
+wchar_t *toUTF16Faster(const char *str)
+{
+	WCHAR *wstr;
+	WCHAR *wp;
+	size_t n;
+
+	if (*str == '\0')			// empty string
+		return emptyUTF16();
+	n = uiprivUTF8UTF16CountFaster(str);
+	wstr = (WCHAR *) uiprivAlloc((n + 1) * sizeof (WCHAR), "WCHAR[]");
+	wp = wstr;
+	while (*str) {
+		str = uiprivUTF8UTF16Faster(str, wp, &n);
+		wp += n;
+	}
+	return wstr;
+}
+
+#define WCTMB(wstr, wstr_size, str, str_size) WideCharToMultiByte(CP_UTF8, 0, wstr, wstr_size, str, str_size, NULL, NULL)
+
+char *toUTF8Faster(const wchar_t *wstr)
+{
+	char *str;
+	char *sp;
+	size_t n;
+
+	if (*wstr == L'\0')		// empty string
+		return emptyUTF8();
+	n = uiprivUTF16UTF8CountFaster(wstr);
+	str = (char *) uiprivAlloc((n + 1) * sizeof (char), "char[]");
+	sp = str;
+	while (*wstr) {
+		wstr = uiprivUTF16UTF8Faster(wstr, sp, &n);
+		sp += n;
+	}
+	return str;
+}
+
+#define MBTWC(str, wstr, bufsiz) MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, bufsiz)
+
+wchar_t *toUTF16Old(const char *str)
+{
+	WCHAR *wstr;
+	int n;
+
+	if (*str == '\0')			// empty string
+		return emptyUTF16();
+	n = MBTWC(str, NULL, 0);
+	if (n == 0) {
+		logLastError(L"error figuring out number of characters to convert to");
+		return emptyUTF16();
+	}
+	wstr = (WCHAR *) uiprivAlloc(n * sizeof (WCHAR), "WCHAR[]");
+	if (MBTWC(str, wstr, n) != n) {
+		logLastError(L"error converting from UTF-8 to UTF-16");
+		// and return an empty string
+		*wstr = L'\0';
+	}
+	return wstr;
+}
+
+#define WCTMB(wstr, str, bufsiz) WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, bufsiz, NULL, NULL)
+
+char *toUTF8Old(const wchar_t *wstr)
+{
+	char *str;
+	int n;
+
+	if (*wstr == L'\0')		// empty string
+		return emptyUTF8();
+	n = WCTMB(wstr, NULL, 0);
+	if (n == 0) {
+		logLastError(L"error figuring out number of characters to convert to");
+		return emptyUTF8();
+	}
+	str = (char *) uiprivAlloc(n * sizeof (char), "char[]");
+	if (WCTMB(wstr, str, n) != n) {
+		logLastError(L"error converting from UTF-16 to UTF-8");
+		// and return an empty string
+		*str = '\0';
+	}
+	return str;
+}
+
 
 WCHAR *utf16dup(const WCHAR *orig)
 {

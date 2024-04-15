@@ -24,6 +24,13 @@ extern size_t uiprivUTF8RuneCount(const char *s, size_t nElem);
 extern size_t uiprivUTF8UTF16Count(const char *s, size_t nElem);
 extern size_t uiprivUTF16RuneCount(const uint16_t *s, size_t nElem);
 extern size_t uiprivUTF16UTF8Count(const uint16_t *s, size_t nElem);
+extern const uint16_t *uiprivUTF16UTF8Faster(const uint16_t *s, char *encoded, size_t *len);
+extern size_t uiprivUTF16UTF8CountFaster(const uint16_t *s);
+extern const uint16_t *uiprivUTF16UTF8RuneCountFaster(const uint16_t *s, size_t *len);
+
+extern const char *uiprivUTF8UTF16Faster(const char *s, uint16_t *encoded, size_t *len);
+extern size_t uiprivUTF8UTF16CountFaster(const char *s);
+extern const char *uiprivUTF8UTF16RuneCountFaster(const char *s, size_t *len);
 
 #ifdef __cplusplus
 }
@@ -35,7 +42,7 @@ extern size_t uiprivUTF16UTF8Count(const uint16_t *s, size_t nElem);
 // passing wchar_t pointers directly into these functions from C++
 // on Windows. Otherwise, you'd need to cast to pass a wchar_t
 // pointer, WCHAR pointer, or equivalent to these functions.
-// 
+//
 // This does not apply to MSVC because the situation there is
 // slightly more complicated; see below.
 #if defined(_WIN32) && !defined(_MSC_VER)
@@ -61,6 +68,30 @@ inline size_t uiprivUTF16RuneCount(const wchar_t *s, size_t nElem)
 inline size_t uiprivUTF16UTF8Count(const wchar_t *s, size_t nElem)
 {
 	return uiprivUTF16UTF8Count(reinterpret_cast<const uint16_t *>(s), nElem);
+}
+
+inline size_t uiprivUTF16UTF8CountFaster(const wchar_t *s)
+{
+	return uiprivUTF16UTF8CountFaster(reinterpret_cast<const uint16_t *>(s));
+}
+
+inline const wchar_t *uiprivUTF16UTF8RuneCountFaster(const wchar_t *s, size_t *len)
+{
+	const uint16_t *ret;
+	ret = uiprivUTF16UTF8RuneCountFaster(reinterpret_cast<const uint16_t *>(s), len);
+	return reinterpret_cast<const wchar_t *>(ret);
+}
+
+inline const wchar_t *uiprivUTF16UTF8Faster(const wchar_t *s, char *encoded, size_t *len)
+{
+	const uint16_t *ret;
+	ret = uiprivUTF16UTF8Faster(reinterpret_cast<const uint16_t *>(s), encoded, len);
+	return reinterpret_cast<const wchar_t *>(ret);
+}
+
+inline const char *uiprivUTF8UTF16Faster(const char *s, wchar_t *encoded, size_t *len)
+{
+	return uiprivUTF8UTF16Faster(s, reinterpret_cast<uint16_t *>(encoded), len);
 }
 
 #endif
@@ -98,6 +129,30 @@ inline size_t uiprivUTF16RuneCount(const __wchar_t *s, size_t nElem)
 inline size_t uiprivUTF16UTF8Count(const __wchar_t *s, size_t nElem)
 {
 	return uiprivUTF16UTF8Count(reinterpret_cast<const uint16_t *>(s), nElem);
+}
+
+inline size_t uiprivUTF16UTF8CountFaster(const __wchar_t *s)
+{
+	return uiprivUTF16UTF8CountFaster(reinterpret_cast<const uint16_t *>(s));
+}
+
+inline const __wchar_t *uiprivUTF16UTF8RuneCountFaster(const __wchar_t *s, size_t *len)
+{
+	const uint16_t *ret;
+	ret = uiprivUTF16UTF8RuneCountFaster(reinterpret_cast<const uint16_t *>(s), len);
+	return reinterpret_cast<const __wchar_t *>(ret);
+}
+
+inline const __wchar_t *uiprivUTF16UTF8Faster(const __wchar_t *s, char *encoded, size_t *len)
+{
+	const uint16_t *ret;
+	ret = uiprivUTF16UTF8Faster(reinterpret_cast<const uint16_t *>(s), encoded, len);
+	return reinterpret_cast<const __wchar_t *>(ret);
+}
+
+inline const char *uiprivUTF8UTF16Faster(const char *s, __wchar_t *encoded, size_t *len)
+{
+	return uiprivUTF8UTF16Faster(s, reinterpret_cast<uint16_t *>(encoded), len);
 }
 
 #endif

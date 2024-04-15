@@ -33,8 +33,8 @@ extern void issueWM_WININICHANGE(WPARAM wParam, LPARAM lParam);
 // utf16.cpp
 #define emptyUTF16() ((WCHAR *) uiprivAlloc(1 * sizeof (WCHAR), "WCHAR[]"))
 #define emptyUTF8() ((char *) uiprivAlloc(1 * sizeof (char), "char[]"))
-extern WCHAR *toUTF16(const char *str);
-extern char *toUTF8(const WCHAR *wstr);
+
+
 extern WCHAR *utf16dup(const WCHAR *orig);
 extern WCHAR *strf(const WCHAR *format, ...);
 extern WCHAR *vstrf(const WCHAR *format, va_list ap);
