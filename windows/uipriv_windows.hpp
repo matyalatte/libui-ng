@@ -55,10 +55,10 @@ extern WCHAR *itoutf16(int i);
 #define debugargs const WCHAR *file, const WCHAR *line, const WCHAR *func
 
 #ifdef LIBUI_NO_DEBUG
-#define _logLastError(...) 0
-#define logLastError(s) 0
-#define _logHRESULT(...) 0
-#define logHRESULT(s, hr) 0
+#define _logLastError(...) (void)0
+#define logLastError(s) (void)0
+#define _logHRESULT(...) (void)0
+#define logHRESULT(s, hr) (void)0
 #else  // LIBUI_NO_DEBUG
 extern HRESULT _logLastError(debugargs, const WCHAR *s);
 #ifdef _MSC_VER

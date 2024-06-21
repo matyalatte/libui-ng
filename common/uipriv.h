@@ -30,11 +30,11 @@ extern void uiprivFree(void *);
 #define uiprivMacro_ns(s) uiprivMacro_ns2(s)
 
 #ifdef LIBUI_NO_DEBUG
-#define uiprivRealBug(...)
-#define uiprivDoImplBug(...)
-#define uiprivImplBug(...)
-#define uiprivDoUserBug(...)
-#define uiprivUserBug(...)
+#define uiprivRealBug(...) (void)0
+#define uiprivDoImplBug(...) (void)0
+#define uiprivImplBug(...) (void)0
+#define uiprivDoUserBug(...) (void)0
+#define uiprivUserBug(...) (void)0
 #else  // LIBUI_NO_DEBUG
 extern void uiprivRealBug(const char *file, const char *line, const char *func, const char *prefix, const char *format, va_list ap);
 extern void uiprivDoImplBug(const char *file, const char *line, const char *func, const char *format, ...);
