@@ -608,3 +608,9 @@ void enableAllWindowsExcept(uiWindow *which)
 		EnableWindow(w.first->hwnd, TRUE);
 	}
 }
+
+void uiWindowsWindowRedraw(uiWindow *w)
+{
+	RedrawWindow(w->hwnd, NULL, NULL,
+		RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);
+}

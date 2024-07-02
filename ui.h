@@ -4232,6 +4232,10 @@ _UI_EXTERN void uiUnixMuntilineEntryScrollToEnd(uiMultilineEntry *e);
 _UI_EXTERN void uiUnixWaitEvents();
 #endif
 
+#ifdef _WIN32
+_UI_EXTERN void uiWindowsWindowRedraw(uiWindow *w);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
