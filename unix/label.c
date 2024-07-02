@@ -20,6 +20,25 @@ void uiLabelSetText(uiLabel *l, const char *text)
 	gtk_label_set_text(l->label, text);
 }
 
+void uiLabelSetTextColor(uiLabel *l, double r, double g, double b)
+{
+	guint16 red = (guint16)(r * 0xFFFF);
+	guint16 green = (guint16)(g * 0xFFFF);
+	guint16 blue = (guint16)(b * 0xFFFF);
+	PangoAttribute *attr = pango_attr_foreground_new(red, green, blue);
+
+	GtkLabel *label = GTK_LABEL(l->widget);
+
+	PangoAttrList *attrs = gtk_label_get_attributes(GTK_LABEL(label));
+
+	if (attrs == NULL)
+		attrs = pango_attr_list_new();
+
+	pango_attr_list_change(attrs, attr);
+	gtk_label_set_attributes(GTK_LABEL(label), attrs);
+	pango_attr_list_unref(attrs);
+}
+
 uiLabel *uiNewLabel(const char *text)
 {
 	uiLabel *l;

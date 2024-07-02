@@ -133,6 +133,9 @@ static LRESULT CALLBACK windowWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		if ((*(w->onClosing))(w, w->onClosingData))
 			uiControlDestroy(uiControl(w));
 		return 0;		// we destroyed it already
+	case WM_CTLCOLORSTATIC:
+		if (runWM_CTLCOLORSTATIC(wParam, lParam, &lResult))
+			return (LRESULT) GetStockObject(NULL_BRUSH);
 	}
 	return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }

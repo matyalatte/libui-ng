@@ -6,6 +6,7 @@ struct handler {
 	BOOL (*notifyHandler)(uiControl *, HWND, NMHDR *, LRESULT *);
 	BOOL (*hscrollHandler)(uiControl *, HWND, WORD, LRESULT *);
 	BOOL (*dropHandler)(uiControl *, HWND, HDROP, LRESULT *);
+	BOOL (*colorstaticHandler)(uiControl *, HWND, HDC, LRESULT *);
 	uiControl *c;
 
 	// just to ensure handlers[new HWND] initializes properly
@@ -16,6 +17,7 @@ struct handler {
 		this->notifyHandler = NULL;
 		this->hscrollHandler = NULL;
 		this->dropHandler = NULL;
+		this->colorstaticHandler = NULL;
 		this->c = NULL;
 	}
 };
@@ -54,6 +56,14 @@ void uiWindowsRegisterWM_DROPFILESHandler(HWND hwnd, BOOL (*handler)(uiControl *
 	handlers[hwnd].c = c;
 }
 
+void uiWindowsRegisterWM_CTLCOLORSTATICHandler(HWND hwnd, BOOL (*handler)(uiControl *, HWND, HDC, LRESULT *), uiControl *c)
+{
+	if (handlers[hwnd].colorstaticHandler != NULL)
+		uiprivImplBug("already registered a WM_CTLCOLORSTATIC handler to window handle %p", hwnd);
+	handlers[hwnd].colorstaticHandler = handler;
+	handlers[hwnd].c = c;
+}
+
 void uiWindowsUnregisterWM_COMMANDHandler(HWND hwnd)
 {
 	if (handlers[hwnd].commandHandler == NULL)
@@ -80,6 +90,13 @@ void uiWindowsUnregisterWM_DROPFILESHandler(HWND hwnd)
 	if (handlers[hwnd].dropHandler == NULL)
 		uiprivImplBug("window handle %p not registered to receive WM_DROPFILES events", hwnd);
 	handlers[hwnd].dropHandler = NULL;
+}
+
+void uiWindowsUnregisterWM_CTLCOLORSTATICHandler(HWND hwnd)
+{
+	if (handlers[hwnd].colorstaticHandler == NULL)
+		uiprivImplBug("window handle %p not registered to receive WM_CTLCOLORSTATIC events", hwnd);
+	handlers[hwnd].colorstaticHandler = NULL;
 }
 
 template<typename T>
@@ -156,6 +173,22 @@ BOOL runWM_DROPFILES(WPARAM wParam, LPARAM lParam, LRESULT *lResult)
 	c = handlers[hwnd].c;
 	if (shouldRun(hwnd, handler))
 		return (*handler)(c, hwnd, hdrop, lResult);
+	return FALSE;
+}
+
+BOOL runWM_CTLCOLORSTATIC(WPARAM wParam, LPARAM lParam, LRESULT *lResult)
+{
+	HWND hwnd;
+	HDC hdc;
+	BOOL (*handler)(uiControl *, HWND, HDC, LRESULT *);
+	uiControl *c;
+
+	hwnd = (HWND) lParam;
+	hdc = (HDC) wParam;
+	handler = handlers[hwnd].colorstaticHandler;
+	c = handlers[hwnd].c;
+	if (shouldRun(hwnd, handler))
+		return (*handler)(c, hwnd, hdc, lResult);
 	return FALSE;
 }
 

@@ -4,9 +4,19 @@
 struct uiLabel {
 	uiWindowsControl c;
 	HWND hwnd;
+	COLORREF color;
 };
 
-uiWindowsControlAllDefaults(uiLabel)
+static void uiLabelDestroy(uiControl *c)
+{
+	uiLabel *l = uiLabel(c);
+
+	uiWindowsUnregisterWM_CTLCOLORSTATICHandler(l->hwnd);
+	uiWindowsEnsureDestroyWindow(l->hwnd);
+	uiFreeControl(c);
+}
+
+uiWindowsControlAllDefaultsExceptDestroy(uiLabel)
 
 static void uiLabelMinimumSize(uiWindowsControl *c, int *width, int *height)
 {
@@ -33,6 +43,22 @@ void uiLabelSetText(uiLabel *l, const char *text)
 	uiWindowsControlMinimumSizeChanged(uiWindowsControl(l));
 }
 
+void uiLabelSetTextColor(uiLabel *l, double r, double g, double b)
+{
+	BYTE red = (BYTE)(r * 0xFF);
+	BYTE green = (BYTE)(g * 0xFF);
+	BYTE blue = (BYTE)(b * 0xFF);
+	l->color = RGB(red, green, blue);
+}
+
+static BOOL onWM_CTLCOLORSTATIC(uiControl *c, HWND hwnd, HDC hdc, LRESULT *lResult)
+{
+	uiLabel *l = uiLabel(c);
+	SetBkMode(hdc, TRANSPARENT);
+	SetTextColor(hdc, l->color);
+	return TRUE;
+}
+
 uiLabel *uiNewLabel(const char *text)
 {
 	uiLabel *l;
@@ -48,6 +74,10 @@ uiLabel *uiNewLabel(const char *text)
 		SS_LEFTNOWORDWRAP | SS_NOPREFIX,
 		hInstance, NULL,
 		TRUE);
+	l->color = 0;
+
+	uiWindowsRegisterWM_CTLCOLORSTATICHandler(l->hwnd, onWM_CTLCOLORSTATIC, uiControl(l));
+
 	uiprivFree(wtext);
 
 	return l;

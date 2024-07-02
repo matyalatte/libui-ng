@@ -18,6 +18,15 @@ void uiLabelSetText(uiLabel *l, const char *text)
 	[l->textfield setStringValue:uiprivToNSString(text)];
 }
 
+void uiLabelSetTextColor(uiLabel *l, double r, double g, double b)
+{
+	NSColor *color = [NSColor colorWithCalibratedRed:(CGFloat)r
+		green:(CGFloat)g
+		blue:(CGFloat)b
+		alpha:(CGFloat)1.0];
+	[l->textfield setTextColor:color];
+}
+
 NSTextField *uiprivNewLabel(NSString *str)
 {
 	NSTextField *tf;

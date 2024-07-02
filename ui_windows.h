@@ -238,6 +238,10 @@ _UI_EXTERN void uiWindowsRegisterWM_DROPFILESHandler(HWND hwnd, BOOL (*handler)(
 _UI_EXTERN void uiWindowsUnregisterWM_DROPFILESHandler(HWND hwnd);
 
 // TODO document
+_UI_EXTERN void uiWindowsRegisterWM_CTLCOLORSTATICHandler(HWND hwnd, BOOL (*handler)(uiControl *, HWND, HDC, LRESULT *), uiControl *c);
+_UI_EXTERN void uiWindowsUnregisterWM_CTLCOLORSTATICHandler(HWND hwnd);
+
+// TODO document
 _UI_EXTERN void uiWindowsRegisterReceiveWM_WININICHANGE(HWND hwnd);
 _UI_EXTERN void uiWindowsUnregisterReceiveWM_WININICHANGE(HWND hwnd);
 
