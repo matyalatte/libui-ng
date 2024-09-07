@@ -4229,6 +4229,7 @@ _UI_EXTERN void uiLabelSetTextColor(uiLabel *l, double r, double g, double b);
 _UI_EXTERN void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace);
 _UI_EXTERN int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e);
 _UI_EXTERN void uiUnixMuntilineEntryScrollToEnd(uiMultilineEntry *e);
+_UI_EXTERN void uiUnixMultilineEntryMarkupAppend(uiMultilineEntry *e, const char *text);
 _UI_EXTERN void uiUnixWaitEvents();
 #endif
 
