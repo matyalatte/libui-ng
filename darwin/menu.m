@@ -59,6 +59,7 @@ enum uiprivMenuItemType {
 		return;
 	}
 
+	NSWindow* parent;
 	switch (self->item->type) {
 	case typeQuit:
 		if (uiprivShouldQuit())
@@ -69,8 +70,17 @@ enum uiprivMenuItemType {
 		// fall through
 	default:
 		// use the key window as the source of the menu event; it's the active window
-		(*(self->item->onClicked))(self->item, uiprivWindowFromNSWindow([uiprivNSApp() keyWindow]),
+		parent = [uiprivNSApp() keyWindow];
+		if (!parent)
+			uiprivImplBug("[uiprivNSApp() keyWindow] is nil");
+
+		(*(self->item->onClicked))(self->item, uiprivWindowFromNSWindow(parent),
 			self->item->onClickedData);
+
+		// Explicitly set a window as the key window, as it can be nil under certain circumstances.
+		// (https://github.com/libui-ng/libui-ng/issues/288)
+		if (parent)
+			[parent makeKeyWindow];
 		break;
 	}
 }
