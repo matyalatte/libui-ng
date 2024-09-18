@@ -123,9 +123,12 @@ endif
 # TODO come up with a better way to do this, both for libui (the compiler define, used by winapi.hpp, and the manifest args) and for the binaries (the manifest args)
 # TODO (after the above TODO is resolved) move that below the part below that actually adds these arguments
 libui_manifest_args = []
+libui_libui_compile_args = []
 if libui_mode == 'static'
 	libui_project_compile_args += ['-D_UI_STATIC']
 	libui_manifest_args = ['-D_UI_STATIC']
+else
+	libui_libui_compile_args = ['-Dlibui_EXPORTS']
 endif
 
 if not libui_is_debug
@@ -180,9 +183,9 @@ libui_libui = library('ui', libui_sources,
 	name_prefix: 'lib',		# always call it libui, even in Windows DLLs
 	install: true,
 	gnu_symbol_visibility: 'hidden',
-	c_args: ['-Dlibui_EXPORTS'],
-	cpp_args: ['-Dlibui_EXPORTS'],
-	objc_args: ['-Dlibui_EXPORTS'],
+	c_args: libui_libui_compile_args,
+	cpp_args: libui_libui_compile_args,
+	objc_args: libui_libui_compile_args,
 	link_args: libui_libui_link_args,
 	soversion: libui_soversion,
 	darwin_versions: [])		# TODO
