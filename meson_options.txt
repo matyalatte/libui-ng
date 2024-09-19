@@ -1,2 +1,4 @@
 option('tests', type : 'boolean', value : true, description : 'Build tests')
 option('examples', type : 'boolean', value : true, description : 'Build examples')
+option('no_area_colorbtn_fontbtn', type : 'boolean', value : false,
+       description : 'Remove uiArea, uiColorButton, and uiFontButton from static linked libui-ng if you don\'t use them in your project.')

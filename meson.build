@@ -131,11 +131,17 @@ else
 	libui_libui_compile_args = ['-Dlibui_EXPORTS']
 endif
 
+# Flag to remove DebugBreak functions
 if not libui_is_debug
 	libui_project_compile_args += ['-DLIBUI_NO_BREAK']
 endif
 if get_option('b_ndebug') == 'true'
 	libui_project_compile_args += ['-DLIBUI_NO_DEBUG']
+endif
+
+# Flag to remove uiArea, uiColorButton, and uiFontButton from static linked libui
+if get_option('no_area_colorbtn_fontbtn')
+	libui_project_compile_args += ['-DLIBUI_NO_AREA_COLORBTN_FONTBTN']
 endif
 
 add_project_arguments(libui_project_compile_args,

@@ -114,6 +114,7 @@ const char *uiInit(uiInitOptions *o)
 	// LONGTERM initialize COM security
 	// LONGTERM (windows vista) turn off COM exception handling
 
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	hr = initDraw();
 	if (hr != S_OK)
 		return ieHRESULT("initializing Direct2D", hr);
@@ -124,12 +125,15 @@ const char *uiInit(uiInitOptions *o)
 
 	if (registerAreaClass(hDefaultIcon, hDefaultCursor) == 0)
 		return ieLastErr("registering uiArea window class");
+#endif
 
 	if (registerMessageFilter() == 0)
 		return ieLastErr("registering libui message filter");
 
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	if (registerD2DScratchClass(hDefaultIcon, hDefaultCursor) == 0)
 		return ieLastErr("initializing D2D scratch window class");
+#endif
 
 	hr = uiprivInitImage();
 	if (hr != S_OK)
@@ -143,11 +147,15 @@ void uiUninit(void)
 	uiprivUninitTimers();
 	uiprivUninitImage();
 	uninitMenus();
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	unregisterD2DScratchClass();
+#endif
 	unregisterMessageFilter();
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	unregisterArea();
 	uiprivUninitDrawText();
 	uninitDraw();
+#endif
 	CoUninitialize();
 	if (DeleteObject(hollowBrush) == 0)
 		logLastError(L"error freeing hollow brush");

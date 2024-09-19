@@ -14,8 +14,10 @@ static BOOL stepsIsRunning;
 
 - (void)sendEvent:(NSEvent *)e
 {
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	if (uiprivSendAreaEvents(e) != 0)
 		return;
+#endif
 	if (uiprivSendKeyboardEditEvents(self, e))
 		return;
 	[super sendEvent:e];
@@ -27,10 +29,12 @@ static BOOL stepsIsRunning;
 // it turns out NSFontManager also sends changeFont: through this; let's inhibit that here too (see fontbutton.m)
 - (BOOL)sendAction:(SEL)sel to:(id)to from:(id)from
 {
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	if (uiprivColorButtonInhibitSendAction(sel, from, to))
 		return NO;
 	if (uiprivFontButtonInhibitSendAction(sel, from, to))
 		return NO;
+#endif
 	return [super sendAction:sel to:to from:from];
 }
 
@@ -41,8 +45,10 @@ static BOOL stepsIsRunning;
 {
 	id override;
 
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	if (uiprivFontButtonOverrideTargetForAction(sel, from, to, &override))
 		return override;
+#endif
 	return [super targetForAction:sel to:to from:from];
 }
 
@@ -128,16 +134,20 @@ const char *uiInit(uiInitOptions *o)
 		[uiprivNSApp() setDelegate:delegate];
 
 		uiprivInitAlloc();
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 		uiprivLoadFutures();
 		uiprivLoadUndocumented();
+#endif
 
 		// always do this so we always have an application menu
 		uiprivAppDelegate().menuManager = [[uiprivMenuManager new] autorelease];
 		[uiprivNSApp() setMainMenu:[uiprivAppDelegate().menuManager makeMenubar]];
 
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 		uiprivSetupFontPanel();
 
 		uiprivInitUnderlineColors();
+#endif
 	}
 
 	globalPool = [[NSAutoreleasePool alloc] init];
@@ -152,7 +162,9 @@ void uiUninit(void)
 	[globalPool release];
 
 	@autoreleasepool {
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 		uiprivUninitUnderlineColors();
+#endif
 		[delegate release];
 		[uiprivNSApp() setDelegate:nil];
 		[app release];
