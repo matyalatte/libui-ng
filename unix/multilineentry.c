@@ -71,18 +71,6 @@ void uiMultilineEntryAppend(uiMultilineEntry *e, const char *text)
 	g_signal_handler_unblock(e->textbuf, e->onChangedSignal);
 }
 
-// TODO scroll to end?
-void uiUnixMultilineEntryMarkupAppend(uiMultilineEntry *e, const char *text)
-{
-	GtkTextIter end;
-
-	gtk_text_buffer_get_end_iter(e->textbuf, &end);
-	// we need to inhibit sending of ::changed because this WILL send a ::changed otherwise
-	g_signal_handler_block(e->textbuf, e->onChangedSignal);
-	gtk_text_buffer_insert_markup(e->textbuf, &end, text, -1);
-	g_signal_handler_unblock(e->textbuf, e->onChangedSignal);
-}
-
 void uiMultilineEntryOnChanged(uiMultilineEntry *e, void (*f)(uiMultilineEntry *e, void *data), void *data)
 {
 	e->onChanged = f;
@@ -143,20 +131,6 @@ uiMultilineEntry *uiNewMultilineEntry(void)
 uiMultilineEntry *uiNewNonWrappingMultilineEntry(void)
 {
 	return finishMultilineEntry(GTK_POLICY_AUTOMATIC, GTK_WRAP_NONE);
-}
-
-void uiUnixMultilineEntrySetMonospace(uiMultilineEntry *e, int monospace) {
-	GtkStyleContext* widget = gtk_widget_get_style_context(GTK_WIDGET(e->textview));
-	gboolean has_monospace = gtk_style_context_has_class(widget, "monospace");
-	if (!has_monospace && monospace)
-		gtk_style_context_add_class(widget, "monospace");
-	else if (has_monospace && !monospace)
-		gtk_style_context_remove_class(widget, "monospace");
-}
-
-int uiUnixMultilineEntryGetMonospace(uiMultilineEntry *e) {
-	GtkStyleContext* widget = gtk_widget_get_style_context(GTK_WIDGET(e->textview));
-	return (int)gtk_style_context_has_class(GTK_WIDGET(e->textview), "monospace");
 }
 
 static gboolean scroll_to_end(gpointer data)
