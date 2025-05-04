@@ -19,8 +19,45 @@ static void setupSavePanel(NSSavePanel *s)
 	[s setTreatsFilePackagesAsDirectories:YES];
 }
 
-static char *runSavePanel(NSWindow *parent, NSSavePanel *s)
+static char* toDarwinPattern(const char* pattern) {
+	// Need to remove "*.*" from pattern.
+	const char* ret = pattern;
+	if (ret[0] == "*"[0])
+		ret++;
+	if (ret[0] == "."[0])
+		ret++;
+	if (ret[0] == "*"[0])
+		ret++;
+	return ret;
+}
+
+static char *runSavePanel(NSWindow *parent, NSSavePanel *s, uiFileDialogParams *params)
 {
+	NSMutableArray* types = [[NSMutableArray alloc] init];
+
+	if (params != NULL) {
+		if (params->filters != NULL) {
+			BOOL use_filter = YES;
+			for (size_t i = 0; i < params->filterCount; i++) {
+				// Add all of the patterns for this filter
+				for (size_t pattern = 0; pattern < params->filters[i].patternCount; pattern++) {
+					const char* ext = toDarwinPattern(params->filters[i].patterns[pattern]);
+					if (ext[0] == 0)
+						use_filter = NO;
+					[types addObject: uiprivToNSString(ext)];
+				}
+			}
+			if (use_filter)
+				[s setAllowedFileTypes:types];
+		} else {
+			if (params->filterCount != 0) {
+				uiprivUserBug("Filter count must be 0 (not %d) if the filters list is NULL.", params->filterCount);
+			}
+		}
+	}
+
+	[types autorelease];
+
 	char *filename;
 
 	[s beginSheetModalForWindow:parent completionHandler:^(NSInteger result) {
@@ -34,7 +71,7 @@ static char *runSavePanel(NSWindow *parent, NSSavePanel *s)
 
 char *uiOpenFile(uiWindow *parent)
 {
-	uiOpenFileWithParams(parent, NULL);
+	return uiOpenFileWithParams(parent, NULL);
 }
 
 char *uiOpenFolder(uiWindow *parent)
@@ -48,29 +85,12 @@ char *uiOpenFolder(uiWindow *parent)
 	[o setAllowsMultipleSelection:NO];
 	setupSavePanel(o);
 	// panel is autoreleased
-	return runSavePanel(windowWindow(parent), o);
+	return runSavePanel(windowWindow(parent), o, NULL);
 }
 
 char *uiSaveFile(uiWindow *parent)
 {
-	NSSavePanel *s;
-
-	s = [NSSavePanel savePanel];
-	setupSavePanel(s);
-	// panel is autoreleased
-	return runSavePanel(windowWindow(parent), s);
-}
-
-static char* toDarwinPattern(const char* pattern) {
-	// Need to remove "*.*" from pattern.
-	char* ret = pattern;
-	if (ret[0] == "*"[0])
-		ret++;
-	if (ret[0] == "."[0])
-		ret++;
-	if (ret[0] == "*"[0])
-		ret++;
-	return ret;
+	return uiSaveFileWithParams(parent, NULL);
 }
 
 char *uiOpenFileWithParams(uiWindow *parent, uiFileDialogParams *params)
@@ -83,33 +103,9 @@ char *uiOpenFileWithParams(uiWindow *parent, uiFileDialogParams *params)
 	[o setResolvesAliases:NO];
 	[o setAllowsMultipleSelection:NO];
 	setupSavePanel(o);
-	NSMutableArray* types = [[NSMutableArray alloc] init];
-
-	if (params != NULL) {
-		if (params->filters != NULL) {
-			BOOL use_filter = YES;
-			for (size_t s = 0; s < params->filterCount; s++) {
-				// Add all of the patterns for this filter
-				for (size_t pattern = 0; pattern < params->filters[s].patternCount; pattern++) {
-					const char* ext = toDarwinPattern(params->filters[s].patterns[pattern]);
-					if (ext[0] == 0)
-						use_filter = NO;
-                    [types addObject: uiprivToNSString(ext)];
-				}
-			}
-			if (use_filter)
-				[o setAllowedFileTypes:types];
-		} else {
-			if (params->filterCount != 0) {
-				uiprivUserBug("Filter count must be 0 (not %d) if the filters list is NULL.", params->filterCount);
-			}
-		}
-	}
-
-	[types autorelease];
 
 	// panel is autoreleased
-	return runSavePanel(windowWindow(parent), o);
+	return runSavePanel(windowWindow(parent), o, params);
 }
 
 char *uiOpenFolderWithParams(uiWindow *parent, uiFileDialogParams *params)
@@ -121,9 +117,12 @@ char *uiOpenFolderWithParams(uiWindow *parent, uiFileDialogParams *params)
 
 char *uiSaveFileWithParams(uiWindow *parent, uiFileDialogParams *params)
 {
-	// TODO
-	uiprivImplBug("Not yet implemented.");
-	return NULL;
+	NSSavePanel *s;
+
+	s = [NSSavePanel savePanel];
+	setupSavePanel(s);
+	// panel is autoreleased
+	return runSavePanel(windowWindow(parent), s, params);
 }
 
 // I would use a completion handler for NSAlert as well, but alas NSAlert's are 10.9 and higher only
