@@ -197,15 +197,11 @@ char *uiSpinboxValueText(uiSpinbox *s)
 
 void uiSpinboxSetValue(uiSpinbox *s, int value)
 {
-	[s->spinbox libui_setValue:(double)value];
+	uiSpinboxSetValueDouble(s, (double)value);
 }
 
 void uiSpinboxSetValueDouble(uiSpinbox *s, double value)
 {
-	if (s->precision == 0) {
-		uiprivUserBug("Setting value to double while spinbox is in int mode is not supported.");
-		return;
-	}
 	[s->spinbox libui_setValue:value];
 }
 

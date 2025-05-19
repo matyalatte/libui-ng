@@ -43,19 +43,11 @@ char *uiSpinboxValueText(uiSpinbox *s)
 
 void uiSpinboxSetValue(uiSpinbox *s, int value)
 {
-	// we need to inhibit sending of ::value-changed because this WILL send a ::value-changed otherwise
-	g_signal_handler_block(s->spinButton, s->onChangedSignal);
-	// this clamps for us
-	gtk_spin_button_set_value(s->spinButton, (gdouble) value);
-	g_signal_handler_unblock(s->spinButton, s->onChangedSignal);
+	uiSpinboxSetValueDouble(s, (double)value);
 }
 
 void uiSpinboxSetValueDouble(uiSpinbox *s, double value)
 {
-	if (s->precision == 0) {
-		uiprivUserBug("Setting value to double while spinbox is in int mode is not supported.");
-		return;
-	}
 	// we need to inhibit sending of ::value-changed because this WILL send a ::value-changed otherwise
 	g_signal_handler_block(s->spinButton, s->onChangedSignal);
 	// this clamps for us
