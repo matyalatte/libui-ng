@@ -114,7 +114,6 @@ const char *uiInit(uiInitOptions *o)
 	// LONGTERM initialize COM security
 	// LONGTERM (windows vista) turn off COM exception handling
 
-#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	hr = initDraw();
 	if (hr != S_OK)
 		return ieHRESULT("initializing Direct2D", hr);
@@ -123,6 +122,7 @@ const char *uiInit(uiInitOptions *o)
 	if (hr != S_OK)
 		return ieHRESULT("initializing DirectWrite", hr);
 
+#ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	if (registerAreaClass(hDefaultIcon, hDefaultCursor) == 0)
 		return ieLastErr("registering uiArea window class");
 #endif
@@ -153,9 +153,9 @@ void uiUninit(void)
 	unregisterMessageFilter();
 #ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN
 	unregisterArea();
+#endif
 	uiprivUninitDrawText();
 	uninitDraw();
-#endif
 	CoUninitialize();
 	if (DeleteObject(hollowBrush) == 0)
 		logLastError(L"error freeing hollow brush");

@@ -140,6 +140,8 @@ extern void unregisterWindowClass(void);
 extern void ensureMinimumWindowSize(uiWindow *);
 extern void disableAllWindowsExcept(uiWindow *which);
 extern void enableAllWindowsExcept(uiWindow *which);
+extern ID2D1DCRenderTarget *uiprivGetWindowRenderTarget(uiWindow *w);
+extern void uiprivReleaseWindowRenderTarget(uiWindow *);
 
 // container.cpp
 #define containerClass L"libui_uiContainerClass"
@@ -186,6 +188,9 @@ extern HRESULT uiprivWICToGDI(IWICBitmap *b, HDC dc, int width, int height, HBIT
 
 // tooltip.cpp
 extern void uiprivDestroyTooltip(uiControl* c);
+
+// dwrite.cpp
+extern void uiprivDrawTextToControl(uiControl *c, HDC hdc, RECT *rect, const WCHAR *wtext, COLORREF color, BOOL centerize);
 
 #endif
 

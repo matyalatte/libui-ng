@@ -174,9 +174,7 @@ void uiEntrySetPlaceholder(uiEntry *e, const char *text)
 	uiprivFree(wtext);
 }
 
-WNDPROC entryProcDefault = 0;
-
-static LRESULT CALLBACK entryWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK entrySubProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
 	LRESULT lResult;
 
@@ -185,10 +183,9 @@ static LRESULT CALLBACK entryWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		return runWM_DROPFILES(wParam, (LPARAM)hwnd, &lResult);
 		break;
 	default:
-		return CallWindowProcW(entryProcDefault, hwnd, uMsg, wParam, lParam);
 		break;
 	}
-	return DefWindowProcW(hwnd, uMsg, wParam, lParam);
+	return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
 static uiEntry *finishNewEntry(DWORD style)
@@ -203,8 +200,8 @@ static uiEntry *finishNewEntry(DWORD style)
 		hInstance, NULL,
 		TRUE);
 
-	entryProcDefault = (WNDPROC)GetWindowLongPtr(e->hwnd, GWLP_WNDPROC);
-	SetWindowLongPtr(e->hwnd, GWLP_WNDPROC, (LONG_PTR)entryWndProc);
+	if (SetWindowSubclass(e->hwnd, entrySubProc, 0, (DWORD_PTR) e) == FALSE)
+		logLastError(L"error subclassing entry to handle parent messages");
 
 	uiWindowsRegisterWM_COMMANDHandler(e->hwnd, onWM_COMMAND, uiControl(e));
 	uiWindowsRegisterWM_DROPFILESHandler(e->hwnd, onWM_DROPFILES, uiControl(e));

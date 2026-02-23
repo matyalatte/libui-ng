@@ -157,6 +157,15 @@ _UI_EXTERN void uiControlSetParent(uiControl *c, uiControl *parent);
 _UI_EXTERN int uiControlToplevel(uiControl *c);
 
 /**
+ * Returns a top level control.
+ *
+ * @param c uiControl instance.
+ * @returns A top level control.
+ * @memberof uiControl
+ */
+_UI_EXTERN uiControl *uiControlGetToplevel(uiControl* c);
+
+/**
  * Returns whether or not the control is visible.
  *
  * @param c uiControl instance.
@@ -4232,6 +4241,10 @@ _UI_EXTERN void uiUnixWaitEvents();
 
 #ifdef _WIN32
 _UI_EXTERN void uiWindowsWindowRedraw(uiWindow *w);
+// Use the default (GDI based) renderer to draw controls when true.
+// Otherwise, some controls use the D2D based renderer which can draw colored emojis.
+_UI_EXTERN int uiWindowsUseLegacyRenderer();
+_UI_EXTERN void uiWindowsSetUseLegacyRenderer(int use_legacy);
 #endif
 
 #ifdef __cplusplus
