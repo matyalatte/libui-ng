@@ -171,6 +171,15 @@ _UI_EXTERN void uiControlSetParent(uiControl *c, uiControl *parent);
 _UI_EXTERN int uiControlToplevel(uiControl *c);
 
 /**
+ * Returns a top level control.
+ *
+ * @param c uiControl instance.
+ * @returns A top level control.
+ * @memberof uiControl
+ */
+_UI_EXTERN uiControl *uiControlGetToplevel(uiControl* c);
+
+/**
  * Returns whether or not the control is visible.
  *
  * @param c uiControl instance.

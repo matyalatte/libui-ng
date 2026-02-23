@@ -27,6 +27,13 @@ int uiControlToplevel(uiControl *c)
 	return (*(c->Toplevel))(c);
 }
 
+uiControl *uiControlGetToplevel(uiControl* c)
+{
+	while (c && !uiControlToplevel(c))
+		c = uiControlParent(c);
+	return c;
+}
+
 int uiControlVisible(uiControl *c)
 {
 	return (*(c->Visible))(c);

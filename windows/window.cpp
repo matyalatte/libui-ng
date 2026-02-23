@@ -18,6 +18,7 @@ struct uiWindow {
 	WINDOWPLACEMENT fsPrevPlacement;
 	int borderless;
 	int focused;
+	ID2D1DCRenderTarget*  rt;
 
 	int (*onClosing)(uiWindow *, void *);
 	void *onClosingData;
@@ -189,6 +190,8 @@ static void uiWindowDestroy(uiControl *c)
 	if (w->menubar != NULL)
 		freeMenubar(w->menubar);
 	// and finally free ourselves
+	if (w->rt)
+		w->rt->Release();
 	windows.erase(w);
 	uiWindowsEnsureDestroyWindow(w->hwnd);
 	uiFreeControl(uiControl(w));
@@ -564,6 +567,8 @@ uiWindow *uiNewWindow(const char *title, int width, int height, int hasMenubar)
 	uiWindowOnFocusChanged(w, defaultOnFocusChanged, NULL);
 	uiWindowOnPositionChanged(w, defaultOnPositionContentSizeChanged, NULL);
 
+	w->rt = NULL;
+
 	windows[w] = true;
 	return w;
 }
@@ -603,4 +608,22 @@ void enableAllWindowsExcept(uiWindow *which)
 			continue;
 		EnableWindow(w.first->hwnd, TRUE);
 	}
+}
+
+ID2D1DCRenderTarget *uiprivGetWindowRenderTarget(uiWindow *w)
+{
+	if (!w->rt) {
+		HDC hdc = GetDC(w->hwnd);
+		RECT rect;
+		GetClientRect(w->hwnd, &rect);
+		w->rt = makeHDCRenderTarget(hdc, &rect);
+	}
+	return w->rt;
+}
+
+void uiprivReleaseWindowRenderTarget(uiWindow *w) {
+	if (!w->rt)
+		return;
+	w->rt->Release();
+	w->rt = NULL;
 }

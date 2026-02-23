@@ -261,6 +261,11 @@ _UI_EXTERN BOOL uiWindowsShouldStopSyncEnableState(uiWindowsControl *c, int enab
 // TODO document
 _UI_EXTERN void uiWindowsControlNotifyVisibilityChanged(uiWindowsControl *c);
 
+// Use the default (GDI based) renderer to draw controls when true.
+// Otherwise, some controls use the D2D based renderer which can draw colored emojis.
+_UI_EXTERN int uiWindowsUseLegacyRenderer();
+_UI_EXTERN void uiWindowsSetUseLegacyRenderer(int use_legacy);
+
 #ifdef __cplusplus
 }
 #endif
