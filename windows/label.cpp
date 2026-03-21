@@ -82,8 +82,8 @@ static LRESULT CALLBACK labelSubProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		hdc = BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rect);
 		uiprivDrawTextToControl(c, hdc, &rect, l->wtext, l->color, FALSE);
-		return TRUE;
-		break;
+		EndPaint(hwnd, &ps);
+		return 0;
 	default:
 		break;
 	}
