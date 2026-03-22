@@ -262,6 +262,7 @@ void uiQueueMain(void (*f)(void *data), void *data)
 	dispatch_async_f(dispatch_get_main_queue(), data, f);
 }
 
+#ifndef LIBUI_NO_TIMER
 @interface uiprivTimerDelegate : NSObject {
         int (*f)(void *data);
         void *data;
@@ -302,6 +303,7 @@ void uiTimer(int milliseconds, int (*f)(void *data), void *data)
                 repeats:YES];
         [delegate release];
 }
+#endif
 
 // TODO figure out the best way to clean the above up in uiUninit(), if it's even necessary
 // TODO that means figure out if timers can still fire without the main loop

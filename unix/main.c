@@ -3,7 +3,9 @@
 
 uiInitOptions uiprivOptions;
 
+#ifndef LIBUI_NO_TIMER
 static GHashTable *timers;
+#endif
 
 const char *uiInit(uiInitOptions *o)
 {
@@ -18,21 +20,27 @@ const char *uiInit(uiInitOptions *o)
 	}
 	uiprivInitAlloc();
 	uiprivLoadFutures();
+#ifndef LIBUI_NO_TIMER
 	timers = g_hash_table_new(g_direct_hash, g_direct_equal);
+#endif
 	return NULL;
 }
 
+#ifndef LIBUI_NO_TIMER
 struct timer;		// TODO get rid of forward declaration
 
 static void uninitTimer(gpointer key, gpointer value, gpointer data)
 {
 	uiprivFree((struct timer *) key);
 }
+#endif
 
 void uiUninit(void)
 {
+#ifndef LIBUI_NO_TIMER
 	g_hash_table_foreach(timers, uninitTimer, NULL);
 	g_hash_table_destroy(timers);
+#endif
 	uiprivUninitMenus();
 	uiprivUninitAlloc();
 }
@@ -119,6 +127,7 @@ void uiQueueMain(void (*f)(void *data), void *data)
 	gdk_threads_add_idle(doqueued, q);
 }
 
+#ifndef LIBUI_NO_TIMER
 struct timer {
 	int (*f)(void *);
 	void *data;
@@ -146,6 +155,7 @@ void uiTimer(int milliseconds, int (*f)(void *data), void *data)
 	g_timeout_add(milliseconds, doTimer, t);
 	g_hash_table_add(timers, t);
 }
+#endif
 
 void uiUnixWaitEvents() {
 	while(gtk_events_pending())

@@ -144,7 +144,9 @@ const char *uiInit(uiInitOptions *o)
 
 void uiUninit(void)
 {
+#ifndef LIBUI_NO_TIMER
 	uiprivUninitTimers();
+#endif
 	uiprivUninitImage();
 	uninitMenus();
 #ifndef LIBUI_NO_AREA_COLORBTN_FONTBTN

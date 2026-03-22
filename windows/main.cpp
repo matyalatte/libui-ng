@@ -129,6 +129,7 @@ void uiQueueMain(void (*f)(void *data), void *data)
 		logLastError(L"error queueing function to run on main thread");
 }
 
+#ifndef LIBUI_NO_TIMER
 static std::map<uiprivTimer *, bool> timers;
 
 void uiTimer(int milliseconds, int (*f)(void *data), void *data)
@@ -158,3 +159,4 @@ void uiprivUninitTimers(void)
 		uiprivFree(t->first);
 	timers.clear();
 }
+#endif

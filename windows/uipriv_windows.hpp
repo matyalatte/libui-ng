@@ -107,16 +107,20 @@ extern const char *initUtilWindow(HICON hDefaultIcon, HCURSOR hDefaultCursor);
 extern void uninitUtilWindow(void);
 
 // main.cpp
+#ifndef LIBUI_NO_TIMER
 // TODO how the hell did MSVC accept this without the second uiprivTimer???????
 typedef struct uiprivTimer uiprivTimer;
 struct uiprivTimer {
 	int (*f)(void *);
 	void *data;
 };
+#endif
 extern int registerMessageFilter(void);
 extern void unregisterMessageFilter(void);
+#ifndef LIBUI_NO_TIMER
 extern void uiprivFreeTimer(uiprivTimer *t);
 extern void uiprivUninitTimers(void);
+#endif
 
 // parent.cpp
 extern BOOL handleParentMessages(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT *lResult);

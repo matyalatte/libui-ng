@@ -143,6 +143,10 @@ endif
 if get_option('no_area_colorbtn_fontbtn')
 	libui_project_compile_args += ['-DLIBUI_NO_AREA_COLORBTN_FONTBTN']
 endif
+# Flag to remove uiTimer
+if get_option('no_timer')
+	libui_project_compile_args += ['-DLIBUI_NO_TIMER']
+endif
 
 add_project_arguments(libui_project_compile_args,
 	language: ['c', 'cpp', 'objc'])

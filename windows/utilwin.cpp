@@ -18,7 +18,9 @@ static LRESULT CALLBACK utilWindowWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 {
 	void (*qf)(void *);
 	LRESULT lResult;
+#ifndef LIBUI_NO_TIMER
 	uiprivTimer *timer;
+#endif
 
 	if (handleParentMessages(hwnd, uMsg, wParam, lParam, &lResult) != FALSE)
 		return lResult;
@@ -37,6 +39,7 @@ static LRESULT CALLBACK utilWindowWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 		qf = (void (*)(void *)) wParam;
 		(*qf)((void *) lParam);
 		return 0;
+#ifndef LIBUI_NO_TIMER
 	case WM_TIMER:
 		timer = (uiprivTimer *) wParam;
 		if (!(*(timer->f))(timer->data)) {
@@ -45,6 +48,7 @@ static LRESULT CALLBACK utilWindowWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 			uiprivFreeTimer(timer);
 		}
 		return 0;
+#endif
 	}
 	return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
