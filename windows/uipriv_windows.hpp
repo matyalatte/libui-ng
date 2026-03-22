@@ -142,6 +142,9 @@ extern void disableAllWindowsExcept(uiWindow *which);
 extern void enableAllWindowsExcept(uiWindow *which);
 extern ID2D1DCRenderTarget *uiprivGetWindowRenderTarget(uiWindow *w);
 extern void uiprivReleaseWindowRenderTarget(uiWindow *);
+extern int uiprivWindowVisible(uiControl *c);
+extern void uiprivWindowShow(uiControl *c);
+extern void uiprivWindowHide(uiControl *c);
 
 // container.cpp
 #define containerClass L"libui_uiContainerClass"

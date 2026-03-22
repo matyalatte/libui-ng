@@ -48,6 +48,7 @@ _UI_EXTERN void uiDarwinControlChildVisibilityChanged(uiDarwinControl *);
 	{ \
 		return (uintptr_t) (type(c)->handlefield); \
 	}
+/*
 #define uiDarwinControlDefaultParent(type, handlefield) \
 	static uiControl *type ## Parent(uiControl *c) \
 	{ \
@@ -100,6 +101,16 @@ _UI_EXTERN void uiDarwinControlChildVisibilityChanged(uiDarwinControl *);
 		uiDarwinControl(c)->enabled = NO; \
 		uiDarwinControlSyncEnableState(uiDarwinControl(c), uiControlEnabledToUser(c)); \
 	}
+*/
+#define uiDarwinControlDefaultParent(type, handlefield)
+#define uiDarwinControlDefaultSetParent(type, handlefield)
+#define uiDarwinControlDefaultToplevel(type, handlefield)
+#define uiDarwinControlDefaultVisible(type, handlefield)
+#define uiDarwinControlDefaultShow(type, handlefield)
+#define uiDarwinControlDefaultHide(type, handlefield)
+#define uiDarwinControlDefaultEnabled(type, handlefield)
+#define uiDarwinControlDefaultEnable(type, handlefield)
+#define uiDarwinControlDefaultDisable(type, handlefield)
 #define uiDarwinControlDefaultSyncEnableState(type, handlefield) \
 	static void type ## SyncEnableState(uiDarwinControl *c, int enabled) \
 	{ \
@@ -177,15 +188,15 @@ _UI_EXTERN void uiDarwinControlChildVisibilityChanged(uiDarwinControl *);
 	var = type(uiDarwinAllocControl(sizeof (type), type ## Signature, #type)); \
 	uiControl(var)->Destroy = type ## Destroy; \
 	uiControl(var)->Handle = type ## Handle; \
-	uiControl(var)->Parent = type ## Parent; \
-	uiControl(var)->SetParent = type ## SetParent; \
-	uiControl(var)->Toplevel = type ## Toplevel; \
-	uiControl(var)->Visible = type ## Visible; \
-	uiControl(var)->Show = type ## Show; \
-	uiControl(var)->Hide = type ## Hide; \
-	uiControl(var)->Enabled = type ## Enabled; \
-	uiControl(var)->Enable = type ## Enable; \
-	uiControl(var)->Disable = type ## Disable; \
+	/* uiControl(var)->Parent = type ## Parent; */ \
+	/* uiControl(var)->SetParent = type ## SetParent; */ \
+	/* uiControl(var)->Toplevel = type ## Toplevel; */ \
+	/* uiControl(var)->Visible = type ## Visible; */ \
+	/* uiControl(var)->Show = type ## Show; */ \
+	/* uiControl(var)->Hide = type ## Hide; */ \
+	/* uiControl(var)->Enabled = type ## Enabled; */ \
+	/* uiControl(var)->Enable = type ## Enable; */ \
+	/* uiControl(var)->Disable = type ## Disable; */ \
 	uiDarwinControl(var)->SyncEnableState = type ## SyncEnableState; \
 	uiDarwinControl(var)->SetSuperview = type ## SetSuperview; \
 	uiDarwinControl(var)->HugsTrailingEdge = type ## HugsTrailingEdge; \

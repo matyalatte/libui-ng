@@ -35,6 +35,7 @@ _UI_EXTERN void uiUnixControlSetContainer(uiUnixControl *, GtkContainer *, gbool
 	{ \
 		return (uintptr_t) (type(c)->widget); \
 	}
+/*
 #define uiUnixControlDefaultParent(type) \
 	static uiControl *type ## Parent(uiControl *c) \
 	{ \
@@ -56,6 +57,7 @@ _UI_EXTERN void uiUnixControlSetContainer(uiUnixControl *, GtkContainer *, gbool
 	{ \
 		return gtk_widget_get_visible(type(c)->widget); \
 	}
+*/
 #define uiUnixControlDefaultShow(type) \
 	static void type ## Show(uiControl *c) \
 	{ \
@@ -68,6 +70,9 @@ _UI_EXTERN void uiUnixControlSetContainer(uiUnixControl *, GtkContainer *, gbool
 		/*TODO part of massive hack about hidden before*/uiUnixControl(c)->explicitlyHidden=TRUE; \
 		gtk_widget_hide(type(c)->widget); \
 	}
+#undef uiUnixControlDefaultShow
+#undef uiUnixControlDefaultHide
+/*
 #define uiUnixControlDefaultEnabled(type) \
 	static int type ## Enabled(uiControl *c) \
 	{ \
@@ -83,6 +88,16 @@ _UI_EXTERN void uiUnixControlSetContainer(uiUnixControl *, GtkContainer *, gbool
 	{ \
 		gtk_widget_set_sensitive(type(c)->widget, FALSE); \
 	}
+*/
+#define uiUnixControlDefaultParent(type)
+#define uiUnixControlDefaultSetParent(type)
+#define uiUnixControlDefaultToplevel(type)
+#define uiUnixControlDefaultVisible(type)
+#define uiUnixControlDefaultShow(type)
+#define uiUnixControlDefaultHide(type)
+#define uiUnixControlDefaultEnabled(type)
+#define uiUnixControlDefaultEnable(type)
+#define uiUnixControlDefaultDisable(type)
 // TODO this whole addedBefore stuff is a MASSIVE HACK.
 #define uiUnixControlDefaultSetContainer(type) \
 	static void type ## SetContainer(uiUnixControl *c, GtkContainer *container, gboolean remove) \
@@ -121,15 +136,15 @@ _UI_EXTERN void uiUnixControlSetContainer(uiUnixControl *, GtkContainer *, gbool
 	var = type(uiUnixAllocControl(sizeof (type), type ## Signature, #type)); \
 	uiControl(var)->Destroy = type ## Destroy; \
 	uiControl(var)->Handle = type ## Handle; \
-	uiControl(var)->Parent = type ## Parent; \
-	uiControl(var)->SetParent = type ## SetParent; \
-	uiControl(var)->Toplevel = type ## Toplevel; \
-	uiControl(var)->Visible = type ## Visible; \
-	uiControl(var)->Show = type ## Show; \
-	uiControl(var)->Hide = type ## Hide; \
-	uiControl(var)->Enabled = type ## Enabled; \
-	uiControl(var)->Enable = type ## Enable; \
-	uiControl(var)->Disable = type ## Disable; \
+	/* uiControl(var)->Parent = type ## Parent; */ \
+	/* uiControl(var)->SetParent = type ## SetParent; */ \
+	/* uiControl(var)->Toplevel = type ## Toplevel; */ \
+	/* uiControl(var)->Visible = type ## Visible; */ \
+	/* uiControl(var)->Show = type ## Show; */ \
+	/* uiControl(var)->Hide = type ## Hide; */ \
+	/* uiControl(var)->Enabled = type ## Enabled; */ \
+	/* uiControl(var)->Enable = type ## Enable; */ \
+	/* uiControl(var)->Disable = type ## Disable; */ \
 	uiUnixControl(var)->SetContainer = type ## SetContainer;
 // TODO document
 _UI_EXTERN uiUnixControl *uiUnixAllocControl(size_t n, uint32_t typesig, const char *typenamestr);

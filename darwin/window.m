@@ -146,6 +146,7 @@ static void uiWindowDestroy(uiControl *c)
 
 uiDarwinControlDefaultHandle(uiWindow, window)
 
+/*
 uiControl *uiWindowParent(uiControl *c)
 {
 	return NULL;
@@ -160,22 +161,23 @@ static int uiWindowToplevel(uiControl *c)
 {
 	return 1;
 }
+*/
 
-static int uiWindowVisible(uiControl *c)
+int uiprivWindowVisible(uiControl *c)
 {
 	uiWindow *w = uiWindow(c);
 
 	return [w->window isVisible];
 }
 
-static void uiWindowShow(uiControl *c)
+void uiprivWindowShow(uiControl *c)
 {
 	uiWindow *w = uiWindow(c);
 
 	[w->window makeKeyAndOrderFront:w->window];
 }
 
-static void uiWindowHide(uiControl *c)
+void uiprivWindowHide(uiControl *c)
 {
 	uiWindow *w = uiWindow(c);
 

@@ -12,6 +12,7 @@ uintptr_t uiControlHandle(uiControl *c)
 	return (*(c->Handle))(c);
 }
 
+/*
 uiControl *uiControlParent(uiControl *c)
 {
 	return (*(c->Parent))(c);
@@ -21,10 +22,11 @@ void uiControlSetParent(uiControl *c, uiControl *parent)
 {
 	(*(c->SetParent))(c, parent);
 }
+*/
 
 int uiControlToplevel(uiControl *c)
 {
-	return (*(c->Toplevel))(c);
+	return c->TypeSignature == uiWindowSignature;
 }
 
 uiControl *uiControlGetToplevel(uiControl* c)
@@ -34,6 +36,7 @@ uiControl *uiControlGetToplevel(uiControl* c)
 	return c;
 }
 
+/*
 int uiControlVisible(uiControl *c)
 {
 	return (*(c->Visible))(c);
@@ -63,6 +66,7 @@ void uiControlDisable(uiControl *c)
 {
 	(*(c->Disable))(c);
 }
+*/
 
 #define uiprivControlSignature 0x7569436F
 
@@ -71,8 +75,8 @@ uiControl *uiAllocControl(size_t size, uint32_t OSsig, uint32_t typesig, const c
 	uiControl *c;
 
 	c = (uiControl *) uiprivAlloc(size, typenamestr);
-	c->Signature = uiprivControlSignature;
-	c->OSSignature = OSsig;
+	// c->Signature = uiprivControlSignature;
+	// c->OSSignature = OSsig;
 	c->TypeSignature = typesig;
 	return c;
 }

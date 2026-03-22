@@ -8,7 +8,7 @@ void uiWindowsControlSyncEnableState(uiWindowsControl *c, int enabled)
 
 void uiWindowsControlSetParentHWND(uiWindowsControl *c, HWND parent)
 {
-	(*(c->SetParentHWND))(c, parent);
+	uiWindowsEnsureSetParentHWND((HWND)uiControlHandle(uiControl(c)), parent);
 }
 
 void uiWindowsControlMinimumSize(uiWindowsControl *c, int *width, int *height)
@@ -24,12 +24,13 @@ void uiWindowsControlMinimumSizeChanged(uiWindowsControl *c)
 // TODO get rid of this
 void uiWindowsControlLayoutRect(uiWindowsControl *c, RECT *r)
 {
-	(*(c->LayoutRect))(c, r);
+	// use the window rect as we include the non-client area in the sizes
+	uiWindowsEnsureGetWindowRect((HWND)uiControlHandle(uiControl(c)), r);
 }
 
 void uiWindowsControlAssignControlIDZOrder(uiWindowsControl *c, LONG_PTR *controlID, HWND *insertAfter)
 {
-	(*(c->AssignControlIDZOrder))(c, controlID, insertAfter);
+	uiWindowsEnsureAssignControlIDZOrder((HWND)uiControlHandle(uiControl(c)), controlID, insertAfter);
 }
 
 void uiWindowsControlChildVisibilityChanged(uiWindowsControl *c)
@@ -118,4 +119,65 @@ void uiWindowsControlNotifyVisibilityChanged(uiWindowsControl *c)
 {
 	// TODO we really need to figure this out; the duplication is a mess
 	uiWindowsControlContinueMinimumSizeChanged(c);
+}
+
+uiControl *uiControlParent(uiControl *c)
+{
+	if (uiControlToplevel(c))
+		return NULL;
+	return uiWindowsControl(c)->parent;
+}
+
+void uiControlSetParent(uiControl *c, uiControl *parent)
+{
+	if (uiControlToplevel(c))
+		uiUserBugCannotSetParentOnToplevel("uiWindow");
+	uiControlVerifySetParent(c, parent);
+	uiWindowsControl(c)->parent = parent;
+}
+
+int uiControlVisible(uiControl *c)
+{
+	if (uiControlToplevel(c))
+		return uiprivWindowVisible(c);
+	return uiWindowsControl(c)->visible;
+}
+
+void uiControlShow(uiControl *c)
+{
+	if (uiControlToplevel(c)) {
+		uiprivWindowShow(c);
+		return;
+	}
+	uiWindowsControl(c)->visible = 1;
+	ShowWindow((HWND)uiControlHandle(c), SW_SHOW);
+	uiWindowsControlNotifyVisibilityChanged(uiWindowsControl(c));
+}
+
+void uiControlHide(uiControl *c)
+{
+	if (uiControlToplevel(c)) {
+		uiprivWindowHide(c);
+		return;
+	}
+	uiWindowsControl(c)->visible = 0;
+	ShowWindow((HWND)uiControlHandle(c), SW_HIDE);
+	uiWindowsControlNotifyVisibilityChanged(uiWindowsControl(c));
+}
+
+int uiControlEnabled(uiControl *c)
+{
+	return uiWindowsControl(c)->enabled;
+}
+
+void uiControlEnable(uiControl *c)
+{
+	uiWindowsControl(c)->enabled = 1;
+	uiWindowsControlSyncEnableState(uiWindowsControl(c), uiControlEnabledToUser(c));
+}
+
+void uiControlDisable(uiControl *c)
+{
+	uiWindowsControl(c)->enabled = 0;
+	uiWindowsControlSyncEnableState(uiWindowsControl(c), uiControlEnabledToUser(c));
 }

@@ -92,20 +92,20 @@ _UI_EXTERN void uiFreeText(char *text);
  */
 typedef struct uiControl uiControl;
 struct uiControl {
-	uint32_t Signature;
-	uint32_t OSSignature;
+	// uint32_t Signature;
+	// uint32_t OSSignature;
 	uint32_t TypeSignature;
 	void (*Destroy)(uiControl *);
 	uintptr_t (*Handle)(uiControl *);
-	uiControl *(*Parent)(uiControl *);
-	void (*SetParent)(uiControl *, uiControl *);
-	int (*Toplevel)(uiControl *);
-	int (*Visible)(uiControl *);
-	void (*Show)(uiControl *);
-	void (*Hide)(uiControl *);
-	int (*Enabled)(uiControl *);
-	void (*Enable)(uiControl *);
-	void (*Disable)(uiControl *);
+	// uiControl *(*Parent)(uiControl *);
+	// void (*SetParent)(uiControl *, uiControl *);
+	// int (*Toplevel)(uiControl *);
+	// int (*Visible)(uiControl *);
+	// void (*Show)(uiControl *);
+	// void (*Hide)(uiControl *);
+	// int (*Enabled)(uiControl *);
+	// void (*Enable)(uiControl *);
+	// void (*Disable)(uiControl *);
 };
 // TOOD add argument names to all arguments
 #define uiControl(this) ((uiControl *) (this))

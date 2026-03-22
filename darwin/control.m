@@ -82,3 +82,64 @@ void uiDarwinNotifyVisibilityChanged(uiDarwinControl *c)
 	if (parent != NULL)
 		uiDarwinControlChildVisibilityChanged(uiDarwinControl(parent));
 }
+
+uiControl *uiControlParent(uiControl *c)
+{
+	if (uiControlToplevel(c))
+		return NULL;
+	return uiDarwinControl(c)->parent;
+}
+
+void uiControlSetParent(uiControl *c, uiControl *parent)
+{
+	if (uiControlToplevel(c))
+		uiUserBugCannotSetParentOnToplevel("uiWindow");
+	uiControlVerifySetParent(c, parent);
+	uiDarwinControl(c)->parent = parent;
+}
+
+int uiControlVisible(uiControl *c)
+{
+	if (uiControlToplevel(c))
+		return uiprivWindowVisible(c);
+	return uiDarwinControl(c)->visible;
+}
+
+void uiControlShow(uiControl *c)
+{
+	if (uiControlToplevel(c)) {
+		uiprivWindowShow(c);
+		return;
+	}
+	uiDarwinControl(c)->visible = YES;
+	[(NSView *)uiControlHandle(c) setHidden:NO];
+	uiDarwinNotifyVisibilityChanged(uiDarwinControl(c));
+}
+
+void uiControlHide(uiControl *c)
+{
+	if (uiControlToplevel(c)) {
+		uiprivWindowHide(c);
+		return;
+	}
+	uiDarwinControl(c)->visible = NO;
+	[(NSView *)uiControlHandle(c) setHidden:YES];
+	uiDarwinNotifyVisibilityChanged(uiDarwinControl(c));
+}
+
+int uiControlEnabled(uiControl *c)
+{
+	return uiDarwinControl(c)->enabled;
+}
+
+void uiControlEnable(uiControl *c)
+{
+	uiDarwinControl(c)->enabled = YES;
+	uiDarwinControlSyncEnableState(uiDarwinControl(c), uiControlEnabledToUser(c));
+}
+
+void uiControlDisable(uiControl *c)
+{
+	uiDarwinControl(c)->enabled = NO;
+	uiDarwinControlSyncEnableState(uiDarwinControl(c), uiControlEnabledToUser(c));
+}

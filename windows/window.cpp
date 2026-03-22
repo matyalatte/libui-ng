@@ -203,6 +203,7 @@ static void uiWindowDestroy(uiControl *c)
 
 uiWindowsControlDefaultHandle(uiWindow)
 
+/*
 uiControl *uiWindowParent(uiControl *c)
 {
 	return NULL;
@@ -217,16 +218,17 @@ static int uiWindowToplevel(uiControl *c)
 {
 	return 1;
 }
+*/
 
 // TODO initial state of windows is hidden; ensure this here and make it so on other platforms
-static int uiWindowVisible(uiControl *c)
+int uiprivWindowVisible(uiControl *c)
 {
 	uiWindow *w = uiWindow(c);
 
 	return w->visible;
 }
 
-static void uiWindowShow(uiControl *c)
+void uiprivWindowShow(uiControl *c)
 {
 	uiWindow *w = uiWindow(c);
 
@@ -245,7 +247,7 @@ static void uiWindowShow(uiControl *c)
 		logLastError(L"error calling UpdateWindow() after showing uiWindow for the first time");
 }
 
-static void uiWindowHide(uiControl *c)
+void uiprivWindowHide(uiControl *c)
 {
 	uiWindow *w = uiWindow(c);
 

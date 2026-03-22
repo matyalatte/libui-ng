@@ -93,6 +93,9 @@ extern NSTextField *uiprivNewEditableTextField(void);
 - (void)uiprivDoResize:(NSEvent *)initialEvent on:(uiWindowResizeEdge)edge;
 @end
 extern uiWindow *uiprivWindowFromNSWindow(NSWindow *);
+extern int uiprivWindowVisible(uiControl *c);
+extern void uiprivWindowShow(uiControl *c);
+extern void uiprivWindowHide(uiControl *c);
 
 // alloc.m
 extern NSMutableArray *uiprivDelegates;

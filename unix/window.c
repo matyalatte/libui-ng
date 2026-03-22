@@ -146,6 +146,7 @@ static void uiWindowDestroy(uiControl *c)
 
 uiUnixControlDefaultHandle(uiWindow)
 
+/*
 uiControl *uiWindowParent(uiControl *c)
 {
 	return NULL;
@@ -160,10 +161,11 @@ static int uiWindowToplevel(uiControl *c)
 {
 	return 1;
 }
+*/
 
 uiUnixControlDefaultVisible(uiWindow)
 
-static void uiWindowShow(uiControl *c)
+void uiprivWindowShow(uiControl *c)
 {
 	uiWindow *w = uiWindow(c);
 
